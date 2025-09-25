@@ -1,0 +1,1936 @@
+/* 
+  Main color and sizing variables.
+  Change these for global color and sizing adjustments.
+*/
+
+html {
+  overflow-y: scroll;
+}
+
+.main-banner {
+  position: relative;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem 0.5rem 1rem;
+}
+
+.banner-logo {
+  height: 30px;
+  margin-right: 2rem;
+}
+
+.banner-nav {
+  display: flex;
+  gap: 2rem;
+  flex: 1;
+  justify-content: center;
+}
+
+/* =============================================
+   THEME VARIABLES (edit here for global styling)
+   ============================================= */
+:root {
+  /* Base / page */
+  --color-bg-page: #ffffff; /* Body background (body) */
+  --color-text-primary: #111; /* Main text (#description-box headings, labels, outputs) */
+  --color-text-secondary: #333; /* Paragraphs, helper text */
+  --color-text-inverse: #ffffff; /* Rare inverse (legacy dark spots) */
+
+  /* Surfaces / containers */
+  --color-surface: #ffffff; /* Calculator cards (.container.center-fields, .description-box, .bandwidth-card, video/dphy wrappers) */
+  --color-surface-accent: #fefbe8; /* Highlight surface (outputs-section) */
+
+  /* Borders */
+  --color-border-subtle: rgba(
+    0,
+    0,
+    0,
+    0.08
+  ); /* Light subtle border for separation */
+  --color-border-output: #e8d780; /* Border for outputs-section */
+  --container-border: 0; /* Set to 0 (no border) OR e.g. 1px solid #fff (white) OR 1px solid #e0e0e0 for subtle frame */
+
+  /* Inputs */
+  --color-input-bg: #ffffff; /* Input background */
+  --color-input-border: #000000; /* Default input border */
+  --color-input-focus: #ffd600; /* Input focus outline & border */
+  --color-input-text: #333333; /* Input text color */
+
+  /* Accent / semantic */
+  --color-accent: #209dd8; /* Primary accent (buttons, hover fills) */
+  --color-accent-hover: #3eabde; /* Hover state for accent elements */
+  --color-error: #e53935; /* Validation errors */
+
+  /* Tables */
+  --color-table-header: #e6e6e6; /* Header background (D-PHY tables) */
+  --color-table-stripe: #f2f2f2; /* Even row background */
+
+  /* Typography & motion */
+  --font-family-base: "Segoe UI", Arial, sans-serif;
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Radius scale */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 18px;
+
+  /* Unified input & form label color */
+  --color-label-input: var(--color-text-secondary);
+
+  /* Legacy variable aliases (kept for now to avoid refactoring every rule) */
+  --bg: var(--color-bg-page);
+  --text: var(--color-text-secondary);
+  --label-color: var(--color-text-secondary);
+  --dropdown-text-color: var(--color-text-primary);
+  --input-label-color: var(--color-text-secondary); /* Legacy */
+  --dropdown-label-color: var(--color-text-secondary); /* Legacy */
+  --instructions-text-color: var(
+    --color-text-secondary
+  ); /* Unused; safe to remove when purged */
+  --output-text-color: var(
+    --color-text-primary
+  ); /* Unused direct; outputs now inherit */
+  --input-bg: var(--color-input-bg);
+  --input-border: var(--color-input-border);
+  --input-focus: var(--color-input-focus);
+  --output-bg: var(--color-surface-accent);
+  --output-border: var(--color-border-output);
+  --output-label: var(--color-text-primary);
+  --output-value: var(--color-text-primary);
+  --accent: var(--color-accent);
+  --shadow: none; /* Shadows removed per design */
+  --transition: var(--transition-base);
+  --error: var(--color-error);
+}
+
+/* LABELS (dropdown + standard) */
+.field-group label,
+#mode-row label,
+#device-row label,
+#package-row label,
+#speed-row label {
+  color: var(--color-label-input);
+}
+
+/* Override legacy duplicated label styling */
+.field-group label {
+  color: var(--color-label-input) !important;
+}
+
+.video-timing-bg-container .field-group label {
+  color: var(--color-label-input) !important;
+}
+
+.apb-register .field-group label {
+  color: var(--color-label-input) !important;
+}
+
+/* Line rate range reminder color */
+#line-rate-reminder {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Dropdown / input text color */
+select,
+input[type="number"],
+input[type="text"] {
+  color: var(--color-text-primary);
+}
+
+/* Custom styling for dropdown options */
+select option {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+/* Custom styling for dropdown options on hover */
+select option:hover,
+select option:focus,
+select option:active,
+select option:checked {
+  background-color: #6c6c6c !important;
+  color: #ffffff !important;
+}
+
+/* Instructions & description text */
+.instructions-block,
+.description-box .desc-text,
+.description-box {
+  color: var(--color-text-secondary);
+}
+
+/* (Old block forcing white output text removed; outputs inherit later rules) */
+
+body {
+  background: var(--color-bg-page);
+  background-size: cover;
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-base);
+  margin: 0;
+  min-height: 100vh;
+  display: block;
+  font-size: 0.85rem;
+}
+
+/* Navigation button styling */
+
+.top-nav .nav-link {
+  color: #fff; /* White font by default */
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.08em;
+  padding: 0.3rem 1.2rem;
+  border-radius: 0.4rem;
+  transition: color 0.18s ease;
+  background: transparent !important; /* No background */
+  border-bottom: none !important; /* No border bottom */
+}
+
+/* Grey text on hover, no background change */
+.top-nav .nav-link:hover,
+.top-nav .nav-link:focus {
+  color: #aaaaaa !important; /* Grey font on hover */
+  background: transparent !important; /* No background */
+  border-bottom: none !important; /* No border */
+}
+
+/* Active page indicator - yellow line under the specific nav button */
+.top-nav .nav-link.active {
+  position: relative;
+  color: #fff !important; /* Keep active link white */
+  background: transparent !important; /* No background */
+}
+
+/* Yellow line under the active button */
+.top-nav .nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 3px;
+  background-color: #ffd600;
+  display: block;
+}
+
+/* Keep the bottom yellow line for the entire navigation bar */
+.top-nav::after,
+.main-nav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: #ffd600; /* Yellow line */
+  z-index: 5;
+  border-radius: 0 0 6px 6px;
+  pointer-events: none;
+}
+
+/* Navigation responsive styles */
+.top-nav {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Responsive navigation bar */
+@media (max-width: 1200px) {
+  .banner-content {
+    padding: 0.5rem 1rem 0.5rem 0.8rem;
+  }
+
+  .banner-logo {
+    height: 28px;
+    margin-right: 1.5rem;
+  }
+
+  .top-nav .nav-link {
+    font-size: 1em;
+    padding: 0.3rem 1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .banner-content {
+    padding: 0.5rem 0.8rem 0.5rem 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .banner-content > div {
+    width: 100%;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .banner-logo {
+    height: 26px;
+    margin-right: 1rem;
+  }
+
+  .top-nav {
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .top-nav .nav-link {
+    font-size: 0.95em;
+    padding: 0.25rem 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .banner-content {
+    padding: 0.4rem 0.6rem 0.4rem 0.5rem;
+  }
+
+  .banner-logo {
+    height: 24px;
+    margin-right: 0.8rem;
+  }
+
+  .top-nav {
+    gap: 0.3rem;
+  }
+
+  .top-nav .nav-link {
+    font-size: 0.9em;
+    padding: 0.25rem 0.6rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .banner-content {
+    padding: 0.4rem 0.5rem 0.4rem 0.4rem;
+  }
+
+  .banner-content > div {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem;
+  }
+
+  .banner-logo {
+    height: 22px;
+    margin-right: 0;
+    margin-bottom: 0.3rem;
+  }
+
+  .top-nav {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+  }
+
+  .top-nav .nav-link {
+    font-size: 0.85em;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .banner-content {
+    padding: 0.3rem 0.4rem 0.3rem 0.3rem;
+  }
+
+  .banner-logo {
+    height: 20px;
+  }
+
+  .top-nav {
+    gap: 0.2rem;
+  }
+
+  .top-nav .nav-link {
+    font-size: 0.8em;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+.description-box {
+  position: static;
+  max-width: 320px;
+  min-width: 220px;
+  margin-bottom: 0.7rem;
+  margin-left: 0;
+  font-weight: bold;
+  font-size: 1.1em;
+  flex: 0 1 320px;
+}
+
+/* Table description box on the right */
+.main-content-row .description-box:last-child {
+  min-width: 260px;
+  max-width: 350px;
+  flex: 0 1 350px;
+}
+
+.table-border {
+  border-collapse: collapse;
+  width: 100%;
+  font-weight: normal;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.table-border td,
+.table-border th {
+  border: 1px solid #888;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+/* Main container for all fields and outputs */
+.container {
+  display: flex;
+  flex-direction: row;
+  /* Change to column for vertical layout */
+  gap: 1.2rem;
+  /* Space between columns */
+  background: var(--input-bg);
+  border-radius: 0.7rem;
+  box-shadow: var(--shadow);
+  padding: 1.2rem 1.2rem;
+  /* Container padding */
+  margin-top: 50rem;
+  /* Center horizontally */
+  transition: background var(--transition), box-shadow var(--transition);
+  align-items: center;
+  max-width: 600px;
+  /* Change for wider/narrower container */
+  width: 100%;
+}
+
+.container.center-fields {
+  justify-content: center;
+  align-items: center;
+  transition: justify-content var(--transition), align-items var(--transition),
+    padding var(--transition);
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* Wrapper for input fields */
+.input-fields-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 250px;
+  position: relative;
+}
+
+/* Section containing both columns */
+.fields-section {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 3.5rem;
+  /* Space between columns */
+}
+
+/* Each column of fields */
+.fields-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.fields-col:first-child {
+  margin-top: 0rem;
+}
+
+.fields-col:last-child {
+  margin-top: 0rem;
+}
+
+.index-bg-container .fields-col:first-child {
+  margin-top: -0.1rem;
+  margin-right: -5rem;
+}
+
+.index-bg-container .fields-col:last-child {
+  margin-top: 0rem;
+}
+
+/* Button row under Number of Gear (desktop) */
+.fields-col .button-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-top: 0.7rem;
+  padding-top: 0;
+}
+
+/* Hide right column button-row on desktop */
+.fields-col:last-child .button-row {
+  display: none;
+}
+
+/* Output section styles */
+.outputs-section {
+  margin: auto;
+  display: block;
+  max-width: 320px;
+  width: 100%;
+  padding: 1.5rem;
+  background-color: #fefbe8;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  min-width: 180px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(30px);
+  transition: opacity var(--transition), visibility var(--transition),
+    transform var(--transition);
+}
+
+.outputs-section.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(0);
+  animation: slideInFromRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.outputs-section.hiding {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(30px);
+  transition: opacity var(--transition), visibility var(--transition),
+    transform var(--transition);
+}
+
+.container.center-fields {
+  background: linear-gradient(to bottom right, #000000, #363636 80%);
+}
+
+.output-group span,
+#bandwidth-output {
+  color: #fff !important;
+  /* or another color that contrasts your background */
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.output-label {
+  font-weight: 600;
+  color: var(--output-label);
+  font-size: 0.92em;
+  margin-bottom: 0.1rem;
+  letter-spacing: 0.03em;
+  transition: color var(--transition);
+}
+
+.output-value {
+  color: var(--output-value);
+  font-size: 0.92em;
+  word-break: break-all;
+  transition: color var(--transition);
+}
+
+.video-timing-container .output-group span,
+.video-timing-container .output-value {
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #000000 !important;
+  /* or use var(--output-value) for theme support */
+}
+
+/* Field group (label + input) */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.field-group input[type="text"],
+.field-group input[type="number"],
+.field-group select {
+  padding: 0.35rem 0.7rem;
+  /* Input padding */
+  border: 2px solid var(--input-border);
+  border-radius: 0.4rem;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 0.92em;
+  transition: border-color var(--transition), box-shadow var(--transition),
+    background var(--transition), color var(--transition);
+  outline: none;
+  box-shadow: 0 2px 8px rgba(255, 221, 51, 0.04);
+  width: 160px;
+  /* Input width, change for wider/narrower fields */
+  max-width: 160px;
+  box-sizing: border-box;
+}
+
+/* General standardize input heights */
+input[type="number"],
+input[type="text"],
+select {
+  height: 2rem;
+  line-height: 2rem;
+  padding: 0 0.75rem;
+  box-sizing: border-box;
+}
+
+/* Standardize input heights and widths for Video Timing Calculator */
+.video-timing-bg-container input[type="number"],
+.video-timing-bg-container input[type="text"],
+.video-timing-bg-container select {
+  height: 2rem;
+  width: 235px;
+  line-height: 2rem;
+  padding: 0 0.75rem;
+  box-sizing: border-box;
+}
+
+/* Error and highlight styles */
+.field-group input[type="number"] {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: 2px solid var(--color-input-border);
+  border-radius: 0.4rem;
+  background: var(--color-input-bg);
+  color: var(--color-input-text);
+  font-size: 1em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field-group input[type="text"].error,
+.field-group input[type="number"].error,
+.field-group select.error {
+  border-color: var(--error);
+}
+
+@keyframes inputHighlight {
+  0% {
+    box-shadow: 0 0 0 0 #e5393533;
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px #e5393533;
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 #e5393533;
+  }
+}
+
+input[type="text"].highlight,
+input[type="number"].highlight,
+select.highlight {
+  animation: inputHighlight 0.7s;
+}
+
+.error-message {
+  color: var(--error);
+  font-size: 0.7em;
+  font-style: italic;
+  margin-top: 0.00001rem;
+  min-height: 1.1em;
+  transition: opacity var(--transition);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.error-message.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.field-group input[type="text"]:focus,
+.field-group input[type="number"]:focus,
+.field-group select:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Button styles */
+.button-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-top: 0.7rem;
+  padding-top: 0;
+}
+
+.action-btn {
+  background: #ffdd33;
+  color: #232426;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.6rem 1.5rem;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-right: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 221, 51, 0.08);
+}
+
+/* Button hover styles */
+button#calculateButton:hover,
+button#clearButton:hover,
+.action-btn:hover,
+#calc-p2b-btn:hover,
+#calculate-btn:hover,
+#clear-btn:hover,
+button[type="button"]:hover,
+input[type="button"]:hover,
+.button-row button:hover {
+  background-color: #3eabde !important; /* Lighter blue on hover */
+  color: #ffffff !important; /* Keep text white */
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Scroll to top button */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 1.2rem;
+  right: 1.2rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  border: none;
+  background: var(--input-bg);
+  color: var(--accent);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+  transition: background var(--transition), color var(--transition),
+    opacity var(--transition), box-shadow var(--transition),
+    transform var(--transition);
+}
+
+.scroll-top-btn:hover {
+  background: var(--accent);
+  color: var(--text);
+  transform: scale(1.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+}
+
+.scroll-top-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/*Bandwidth Calculator*/
+/* Card-like container for the calculator */
+
+.bandwidth-card {
+  max-width: 420px;
+  margin: 3rem auto 2rem auto;
+  margin-top: 5.5rem;
+  background: linear-gradient(to bottom right, #232426, #2c2f33);
+  border-radius: 20px;
+  padding: 2.5rem 2rem 2rem 2rem;
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Center the form fields vertically */
+.bandwidth-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 100%;
+  align-items: center;
+}
+
+/* Field group styling */
+.bandwidth-fields .field-group {
+  width: 200px;
+  max-width: 320px;
+  align-items: center;
+}
+
+/* Button row centered */
+.bandwidth-buttons {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  background: #232426;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+}
+
+/*Instructions, input field, output field alignment for Video Timing Calculator*/
+
+.flex-row {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.main-flex-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+  /* Align items to the left */
+  margin-top: 0;
+}
+
+.video-timing-container {
+  background: var(--input-bg);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+  margin: 0;
+  margin-right: 100px;
+  display: flex;
+  gap: 4rem;
+  /* space between form and output */
+  align-items: flex-start;
+  margin-left: 100px;
+  max-width: 2000px;
+}
+
+.form-block {
+  flex: 1 1 0;
+  min-width: 280px;
+  max-width: 100%;
+}
+
+#outputSection {
+  flex: 1 1 320px;
+  /* Allow to grow/shrink, set min width */
+  min-width: 300px;
+  max-width: 100%;
+}
+
+.instructions-block {
+  max-width: 400px;
+  /* or any value you prefer */
+  width: 100%;
+  /* or set a fixed width like 350px */
+  background: var(--input-bg);
+  color: var(--text);
+  padding: 2rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0;
+}
+
+body.light .video-timing-container .output-group span,
+body.light .video-timing-container .output-value,
+body.light .video-timing-container #bandwidth-output,
+body.light .video-timing-container #b2p-bandwidth-output,
+body.light .video-timing-container #bitsclock-output {
+  color: #232426 !important;
+}
+
+/*Input styling for Video Timing Calculator*/
+
+.video-timing-container .form-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.video-timing-bg-container label,
+.video-timing-bg-container .field-group label {
+  font-size: 0.92em;
+  /* smaller label font */
+  margin-bottom: 0.15rem;
+  margin-right: 0.5rem;
+  /* space between label and input */
+  min-width: 140px;
+  /* adjust as needed for alignment */
+  text-align: left;
+  /* optional: right-align label text */
+  color: var(--color-label-input) !important;
+}
+
+.video-timing-container input[type="number"],
+.video-timing-container input[type="text"],
+.video-timing-container select {
+  font-size: 0.92em;
+  /* smaller input font */
+  padding: 0.3rem 0.5rem;
+  /* less padding */
+  width: 220px;
+  /* narrower input box */
+  max-width: 1000px;
+  box-sizing: border-box;
+}
+
+.video-timing-container #bitsPerPixel {
+  background: #e0e0e0 !important;
+  color: #232426 !important;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+  color: var(--text);
+  /* or your preferred color */
+}
+
+input[type="number"],
+input[type="text"],
+select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus,
+select:focus {
+  border-color: var(--input-focus);
+  outline: none;
+}
+
+button#calculateButton,
+button#clearButton,
+.action-btn,
+#calc-p2b-btn,
+#calculate-btn,
+#clear-btn,
+button[type="button"],
+input[type="button"],
+.button-row button {
+  background-color: #209dd8 !important; /* Blue background */
+  color: #ffffff !important; /* White text */
+  border: none !important;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Field label and input styling */
+.field-group label {
+  display: block;
+  font-weight: 600;
+  color: var(--color-label-input);
+  margin-bottom: 0.3rem;
+  font-size: 1em;
+}
+
+/* Tooltip styling */
+.tooltip-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tooltip-icon {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.9em;
+  color: var(--input-border);
+  cursor: help;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 350px;
+  background-color: var(--input-bg);
+  color: var(--text);
+  text-align: left;
+  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid var(--accent);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 10;
+  top: 100%;
+  left: 0;
+  margin-top: 5px;
+
+  /* Typography */
+  font-weight: normal;
+  font-size: 0.9em;
+  line-height: 1.4;
+
+  /* Fade in animation */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-text ul {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+}
+
+.tooltip-text li {
+  margin-bottom: 8px;
+}
+
+/* Show the tooltip on hover */
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Output group styling */
+.bandwidth-output-group {
+  width: 100%;
+  max-width: 320px;
+  margin: 1.5rem auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#bandwidth-output,
+#b2p-bandwidth-output,
+#bitsclock-output {
+  color: #fff;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-top: 0.3rem;
+  min-height: 1.5em;
+  text-align: center;
+}
+
+#b2p-bandwidth-output {
+  color: black !important;
+}
+
+#calc-p2b-btn:hover,
+.clear-btn:hover {
+  background: #fff700;
+  color: #232426;
+}
+
+/* Responsive adjustments */
+@media (max-width: 700px) {
+  #input-to-p2b-section {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .output-group {
+    margin-top: 0.5rem;
+  }
+}
+
+/* Responsive: vertical layout for mobile/tablet */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 0.7rem 0.3rem;
+    margin-top: 0.5rem;
+    max-width: 98vw;
+  }
+
+  .fields-section {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .fields-col .button-row {
+    display: none;
+  }
+
+  .fields-col:last-child .button-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-start;
+    align-items: flex-end;
+    margin-top: 0.7rem;
+    padding-top: 0;
+  }
+
+  .fields-col:last-child {
+    margin-top: 0;
+    /* Remove negative margin on mobile */
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 600px) {
+  .container {
+    padding: 0.3rem 0.1rem;
+    border-radius: 0.5rem;
+  }
+
+  .field-group input[type="text"],
+  .field-group input[type="number"],
+  .field-group select {
+    font-size: 0.85em;
+    padding: 0.4rem 0.5rem;
+    width: 98vw;
+    max-width: 98vw;
+  }
+
+  .output-group {
+    font-size: 0.85em;
+    padding: 0.4rem 0.5rem;
+  }
+}
+
+/* Always-dark banner and navigation */
+.main-banner,
+.banner-content,
+.banner-nav,
+.banner-underline {
+  background: #232426 !important;
+  color: #fffde7 !important;
+}
+
+.banner-logo {
+  filter: none !important;
+}
+
+.banner-link,
+.banner-link:visited {
+  color: #fffde7 !important;
+}
+
+.banner-link.active,
+.banner-link:hover {
+  background: #ffd600 !important;
+  color: #232426 !important;
+}
+
+.banner-underline {
+  background: #ffd600 !important;
+}
+
+.main-banner,
+.banner-content,
+.banner-nav,
+.banner-underline,
+.top-nav,
+.main-nav {
+  background: #333333 !important; /* Grey background */
+  color: #fffde7 !important; /* Light text color */
+}
+
+/* Resize the .top-nav */
+.top-nav {
+  height: 22px;
+  /* Adjust the height */
+  padding: 0.5rem 2rem;
+  /* Adjust the padding */
+  font-size: 1rem;
+  /* Adjust the font size of the text */
+  max-width: 1500px;
+  /* Optional: Set a maximum width */
+  margin: 0 auto;
+  /* Center it horizontally */
+}
+
+.nav-link,
+.nav-link:visited {
+  color: #fffde7 !important;
+}
+
+.nav-link.active,
+.nav-link:hover {
+  background: #ffd600 !important;
+  color: #232426 !important;
+}
+
+/* Light mode: force white backgrounds for main container and fields */
+
+body.light .container,
+body.light .bandwidth-card {
+  background: #fff !important;
+  color: #111 !important;
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.08);
+}
+
+body.light .field-group input[type="text"],
+body.light .field-group input[type="number"],
+body.light .field-group select {
+  background: #fff !important;
+  color: #000 !important;
+  border-color: #000 !important;
+}
+
+body.light .field-group label,
+body.light .output-label {
+  color: var(--text);
+}
+
+body.light #bandwidth-output,
+body.light #bitsclock-output,
+body.light #b2p-bandwidth-output {
+  color: #000 !important;
+}
+
+/* Light mode: output container background for config.html */
+body.light #bandwidth-output,
+body.light .output-container {
+  background: #fffde7 !important;
+  /* or another light color for contrast */
+  color: #232426 !important;
+  /* ensure text is readable */
+  border-color: #ffe066 !important;
+}
+
+.mode-selector {
+  display: flex;
+  margin-top: 1.6rem;
+  margin-bottom: 2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-bottom: auto;
+  z-index: auto;
+}
+
+.mode-selector label {
+  font-size: 1rem;
+  /* Adjust label font size */
+  font-weight: bold;
+  /* Make the label bold */
+  color: var(--text);
+  /* Use theme text color */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  height: 100%;
+}
+
+.mode-selector select {
+  width: 100%;
+  /* Make the dropdown full width */
+  padding: 0.5rem;
+  /* Add padding inside the dropdown */
+  border: 2px solid var(--input-border);
+  /* Add border */
+  border-radius: 0.4rem;
+  /* Round the corners */
+  background: var(--input-bg);
+  /* Use theme background color */
+  color: var(--text);
+  /* Use theme text color */
+  font-size: 1rem;
+  /* Adjust font size */
+}
+
+/* APB Register Configuration page styles */
+.apb-register .container {
+  max-width: 900px;
+  margin: 2.5rem auto 0 auto;
+  background: var(--input-bg);
+  border-radius: 0.7rem;
+  box-shadow: var(--shadow);
+  padding: 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.apb-register .fields-section {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.apb-register .fields-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.apb-register .field-group input[type="number"] {
+  width: 100%;
+  padding: 0.4rem 0.7rem;
+  border: 2px solid var(--input-border);
+  border-radius: 0.4rem;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 1em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.apb-register .field-group input[type="number"]:focus {
+  border-color: var(--input-focus);
+}
+
+.apb-register .button-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-top: 1.2rem;
+}
+
+.apb-register .outputs-section {
+  margin-top: 2rem;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.apb-register .output-group {
+  background: var(--output-bg);
+  border: 2px solid var(--output-border);
+  border-radius: 0.4rem;
+  padding: 0.7rem 1.2rem;
+  min-width: 180px;
+  min-height: 36px;
+  box-shadow: 0 2px 8px rgba(255, 221, 51, 0.04);
+  margin-bottom: 0.5rem;
+}
+
+.apb-register .output-label {
+  color: var(--output-label);
+  font-weight: 600;
+  font-size: 0.95em;
+  margin-bottom: 0.1rem;
+}
+
+.apb-register .output-value {
+  color: var(--output-value);
+  font-size: 1em;
+  word-break: break-all;
+}
+
+#dphy-output-table td,
+#dphy-output-table th {
+  width: 150px;
+}
+
+#dphy-rx-output-table td,
+#dphy-rx-output-table th {
+  width: 150px;
+}
+
+/*For image magnification modal*/
+/* Modal background */
+.img-modal {
+  display: none;
+  position: fixed;
+  z-index: 1001;
+  left: 0;
+  top: 0;
+  width: 110vw;
+  height: 200vh;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.85);
+  justify-content: center;
+  align-items: center;
+}
+
+.img-modal-content {
+  margin-top: 3rem;
+  display: block;
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 0 24px #000;
+  border-radius: 8px;
+}
+
+/* Close button for the modal */
+.img-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1010;
+  transition: color 0.2s;
+}
+
+/* Close button hover effect */
+.img-modal-close:hover {
+  color: #ffdd33;
+}
+
+.img-magnify {
+  cursor: zoom-in;
+}
+
+/* Top description row as flexbox */
+.dphy-description-row {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  width: 100%;
+  justify-content: center;
+  align-items: stretch;
+  margin-bottom: 1.2rem;
+  margin-top: 2.5rem;
+}
+.dphy-description-row .description-box {
+  flex: 1 1 0;
+  min-width: 260px;
+  max-width: 480px;
+  margin-bottom: 0;
+  margin-left: 0;
+  font-weight: bold;
+  font-size: 1.1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+/* Main content row as flexbox */
+.main-content-padded {
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 0 !important;
+  margin: 0 auto !important;
+}
+
+.main-content-padded > div {
+  flex: 1 1 0;
+  min-width: 320px;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto !important;
+}
+
+/* Input container as flexbox */
+.container.center-fields {
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center !important;
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto !important;
+}
+
+/* Output tables as flexbox */
+.description-box[style*="max-width: 900px"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto !important;
+  margin-top: 2rem;
+}
+
+.table-border {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* DPYH Register Configuration page styles */
+.dphy-bg-container {
+  border-radius: 18px;
+  padding: 2rem 0;
+  min-height: calc(100vh - 8rem);
+  max-height: fit-content;
+  margin: auto;
+  width: 100%;
+  max-width: 1200px;
+}
+
+@media (max-width: 900px) {
+  .dphy-bg-container {
+    padding: 1.2rem 0.5rem;
+    max-width: 99vw;
+    min-height: 90vh;
+  }
+}
+
+/* Video Timing Calculator page styles */
+.video-timing-bg-container {
+  border-radius: 18px;
+  padding: 2rem 0;
+  min-height: calc(100vh - 8rem);
+  max-height: fit-content;
+  margin: auto;
+  width: 100%;
+  max-width: 1200px;
+}
+
+@media (max-width: 900px) {
+  .video-timing-bg-container {
+    padding: 1.2rem 0.5rem;
+    max-width: 99vw;
+    min-height: 90vh;
+  }
+}
+
+/* Video Timing description row as flexbox */
+.video-timing-description-row {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  width: 100%;
+  justify-content: center;
+  align-items: stretch;
+  margin-bottom: 1.2rem;
+  margin-top: 2.5rem;
+}
+
+.video-timing-description-row .description-box {
+  flex: 1 1 0;
+  min-width: 260px;
+  max-width: 480px;
+  margin-bottom: 0;
+  margin-left: 0;
+  font-weight: bold;
+  font-size: 1.1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+/* New styles for config.html description and instructions layout */
+.index-bg-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 80vw;
+  min-width: 340px;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), min-height 0.3s,
+    height 0.3s;
+  overflow: visible;
+  border-radius: 18px;
+  height: fit-content;
+}
+
+.index-bg-container.expanded {
+  width: 100rem;
+  max-width: 120rem;
+}
+
+.index-desc-flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 2.5rem;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin: 2.5rem 3rem 0 3rem;
+}
+
+.index-desc-col {
+  flex: 1 1 0;
+  min-width: 320px;
+  max-width: 520px;
+  color: white;
+}
+
+/* Dropdown alignment fixes */
+#dropdowns-container > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  min-width: 270px;
+  width: 270px;
+}
+
+#mode-row,
+#device-row,
+#package-row,
+#speed-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Reduced gap for tighter spacing */
+  width: 270px;
+  min-height: 1.5rem; /* Reduced min-height for less vertical space */
+  margin-bottom: 0.2rem; /* Add a small margin if needed, or set to 0 for no extra space */
+  padding-bottom: 0; /* Ensure no extra padding */
+}
+
+#mode-select,
+#device-select,
+#package-select,
+#speed-select {
+  min-width: 320px;
+  max-width: 320px;
+}
+
+#mode-row:last-child,
+#device-row:last-child,
+#package-row:last-child,
+#speed-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Video Timing Calculator specific styles */
+.video-timing-bg-container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 0 auto;
+  max-width: 1400px;
+  /* Remove transition - container stays at fixed width */
+}
+
+@media (max-width: 900px) {
+  .video-timing-bg-container {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+}
+
+.video-timing-description-row {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.video-timing-description-row .description-box {
+  flex: 1;
+  min-width: 300px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Video Timing Calculator side-by-side layout */
+.video-timing-bg-container .container.center-fields {
+  /* Container set to accommodate inputs in center and outputs to the right */
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  justify-content: center;
+  padding: 0 2rem;
+}
+
+.video-timing-bg-container .container.center-fields .form-group {
+  width: 12.5rem;
+}
+
+/* Output section slides in without affecting input position */
+.video-timing-bg-container .container.center-fields .outputs-section {
+  flex: 0 0 auto;
+  min-width: 270px;
+  max-width: 300px;
+}
+
+/* Video timing output label styling - make them black */
+.video-timing-bg-container .output-label {
+  color: #000000 !important;
+  font-weight: 600;
+  font-size: 0.92em;
+  margin-bottom: 0.1rem;
+  letter-spacing: 0.03em;
+}
+
+/* Video timing output value styling*/
+.video-timing-bg-container .output-value {
+  color: #000000 !important;
+  font-size: 0.92em;
+  word-break: break-all;
+}
+
+/* Responsive adjustments for side-by-side layout */
+@media (max-width: 1200px) {
+  .video-timing-bg-container .container.center-fields > div {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    width: 100% !important;
+    max-width: 700px !important;
+    margin: 0 auto !important;
+  }
+
+  .video-timing-bg-container .container.center-fields .form-block {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  .video-timing-bg-container .container.center-fields .outputs-section {
+    min-width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    height: fit-content !important;
+    padding: 1rem !important;
+    flex: 0 0 auto !important;
+    align-self: flex-start !important;
+  }
+}
+
+/* MachXO3D-style striped tables */
+#dphy-output-table,
+#dphy-rx-output-table {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+}
+#dphy-output-table thead tr,
+#dphy-rx-output-table thead tr {
+  background: #e6e6e6;
+  font-weight: 600;
+}
+#dphy-output-table td,
+#dphy-output-table th,
+#dphy-rx-output-table td,
+#dphy-rx-output-table th {
+  color: #111;
+  border: 1px solid #c5c5c5;
+  padding: 0.5rem;
+}
+#dphy-output-table tbody tr:nth-child(odd),
+#dphy-rx-output-table tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+#dphy-output-table tbody tr:nth-child(even),
+#dphy-rx-output-table tbody tr:nth-child(even) {
+  background: #f2f2f2;
+}
+
+/* Unified white container styling */
+.container.center-fields,
+.description-box,
+.index-bg-container .container.center-fields,
+.video-timing-bg-container,
+.dphy-bg-container .container.center-fields,
+.bandwidth-card {
+  background: var(--color-surface) !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: var(--container-border) !important;
+  color: var(--color-text-secondary) !important;
+}
+
+/* Outputs section (highlight) */
+.outputs-section {
+  background: var(--color-surface-accent) !important;
+  border: 1px solid var(--color-border-output) !important;
+  color: var(--color-text-secondary) !important;
+}
+
+/* Table stripes driven by variables */
+#dphy-output-table,
+#dphy-rx-output-table {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+}
+#dphy-output-table thead tr,
+#dphy-rx-output-table thead tr {
+  background: var(--color-table-header);
+}
+#dphy-output-table tbody tr:nth-child(even),
+#dphy-rx-output-table tbody tr:nth-child(even) {
+  background: var(--color-table-stripe);
+}
+
+/* Output text color (final override) */
+.output-group span,
+#bandwidth-output {
+  color: var(--color-text-primary) !important;
+}
+
+/* D-PHY extra outputs text color */
+#dphy-extra-outputs,
+#dphy-extra-outputs strong,
+#dphy-extra-outputs span {
+  color: var(--color-text-secondary) !important;
+}
+
+/* === Drop shadow removal (containers & UI) === */
+.container,
+.description-box,
+.outputs-section,
+.bandwidth-card,
+.video-timing-container,
+.video-timing-bg-container,
+.dphy-bg-container,
+.index-bg-container,
+.diagram-tooltip-content,
+.tooltip-content,
+.tooltip-text,
+.img-modal-content {
+  box-shadow: none !important;
+}
+/* End drop shadow removal overrides */
+
+/* Video Timing page button standardization */
+.video-timing-bg-container .button-row {
+  justify-content: center !important;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.video-timing-bg-container .action-btn {
+  min-width: 140px;
+  height: 40px; /* ~2.5rem */
+  padding: 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  margin-right: 0; /* use flex gap for spacing */
+}
+
+/* Ensure hover effect remains consistent */
+.video-timing-bg-container .action-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Centering and styling for index.html welcome and disclaimer sections */
+.welcome-section,
+.disclaimer-section {
+  text-align: left;
+  font-family: var(--font-family-base);
+  font-size: 1.2em;
+  margin: 20px auto;
+  max-width: 800px;
+  text-justify: distribute;
+}
+
+.welcome-section h1,
+.disclaimer-section h2 {
+  text-align: center !important;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.welcome-section p,
+.disclaimer-section p {
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+/* Footer disclaimer styling */
+.site-footer {
+  background: #232426;
+  color: #ffffff;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-top: 3rem;
+  padding: 2rem 1.5rem;
+}
+.site-footer h2,
+.site-footer h3 {
+  color: #ffd600;
+  font-size: 1rem;
+  margin-top: 0;
+}
+.site-footer p {
+  margin: 0 0 0.8rem 0;
+}
+.site-footer .disclaimer-text {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  text-align: left;
+  white-space: normal;
+}
+.site-footer a {
+  color: #ffd84d;
+  text-decoration: underline;
+}
+.site-footer a:hover {
+  color: #ffe899;
+}
+.site-footer .disclaimer-text.collapsed p:not(:first-of-type) {
+  display: none;
+}
+.site-footer .disclaimer-toggle-wrapper {
+  text-align: center;
+  margin: 0.8rem 0 1.2rem;
+}
+#disclaimer-toggle {
+  background: #666;
+  color: #fff;
+  border: 1px solid #888;
+  padding: 0.5rem 1.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+#disclaimer-toggle:hover {
+  background: #777;
+}
+
+.disabled-select {
+  opacity: 0.45;
+  pointer-events: none;
+  background: #ccc !important;
+  color: #666 !important;
+}

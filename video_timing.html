@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Timing Calculator</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="imgs/favicon.ico" />
+  </head>
+
+  <body>
+    <!-- Banner/Header -->
+    <header class="main-banner">
+      <div class="banner-content">
+        <!-- Logo and navigation side by side -->
+        <div style="display: flex; align-items: center">
+          <a href="https://www.latticesemi.com/" target="_blank" rel="noopener">
+            <img
+              src="imgs/Lattice Logo Yellow_White.png"
+              alt="Lattice Semiconductor Logo"
+              class="banner-logo"
+            />
+          </a>
+          <!--To add new pages & highlight which page user is on-->
+          <nav class="top-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="config.html" class="nav-link">MIPI Configuration</a>
+            <a href="dphy.html" class="nav-link">D-PHY Timing Parameters</a>
+            <a href="video_timing.html" class="nav-link">Video Timing</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main background container -->
+    <div class="video-timing-bg-container">
+      <main>
+        <!-- Top description row as flexbox -->
+        <div class="video-timing-description-row" style="margin-top: -1.5rem">
+          <!-- Description and image column -->
+          <div
+            class="description-box"
+            style="
+              max-width: 380px;
+              min-width: 260px;
+              margin-top: 2rem;
+              position: relative;
+            "
+          >
+            <h2 style="display: flex; align-items: center; gap: 0.6rem">
+              Video Timing Calculator
+              <span
+                class="diagram-tooltip"
+                tabindex="0"
+                aria-label="Open Frame Diagram"
+                style="
+                  display: inline-block;
+                  position: relative;
+                  color: #fcdf50;
+                  font-weight: bold;
+                  cursor: pointer;
+                "
+              >
+                ⓘ
+                <div
+                  class="diagram-tooltip-content"
+                  style="
+                    display: none;
+                    position: absolute;
+                    left: 0;
+                    z-index: 1200;
+                    background: #fefbe8;
+                    color: #000;
+                    padding: 0.6rem;
+                    border-radius: 6px;
+                    border: 1px solid rgba(0, 0, 0, 0.08);
+                    width: 320px;
+                  "
+                >
+                  <div style="font-weight: bold; margin-bottom: 0.4rem">
+                    Frame Diagram
+                  </div>
+                  <img
+                    src="imgs/Calculator-FrameDiagram.png"
+                    alt="Frame Diagram preview"
+                    style="
+                      width: 100%;
+                      height: auto;
+                      display: block;
+                      cursor: zoom-in;
+                      border-radius: 4px;
+                    "
+                  />
+                  <div
+                    style="
+                      text-align: right;
+                      margin-top: 6px;
+                      font-size: 0.8em;
+                      color: #666;
+                    "
+                  >
+                    Click to open and zoom
+                  </div>
+                </div>
+              </span>
+            </h2>
+            <p style="font-weight: normal">
+              This tool is designed to help users calculate the required pixel clock and total bandwidth needed to receive and transmit a specific video resolution. Users can either select from preset resolutions or enter a custom video resolution.
+            </p>
+            <p style="font-weight: normal; margin-top: 0.8rem">
+              The results are calculated using the following equations:
+            </p>
+            <ul
+              style="
+                margin-top: 0.2rem;
+                padding-left: 1.1rem;
+                font-weight: normal;
+              "
+            >
+              <li>
+                <strong>HTOTAL</strong> = Horizontal Pixels + Total Horizontal Blanking
+              </li>
+              <li>
+                <strong>VTOTAL</strong> = Vertical Lines + Total Vertical Blanking
+              </li>
+              <li>
+                <strong>Total Pixel per Frame per Sec</strong> = HTOTAL × VTOTAL × Refresh Rate
+              </li>
+              <li>
+                <strong>Pixel Clock (MHz)</strong> = Total Pixel per Frame per Sec ÷ 10^6
+              </li>
+              <li>
+                <strong>Total Link Bandwidth Used (Gbps)</strong> = Total Pixel per Frame per Sec × Bits per Pixel ÷ 10^9
+              </li>
+            </ul>
+            <!-- preview is shown from the tooltip above -->
+          </div>
+          <!-- Instructions column -->
+          <div
+            class="description-box"
+            style="
+              max-width: 380px;
+              min-width: 260px;
+              margin-top: 2rem;
+              position: relative;
+              z-index: 0;
+            "
+          >
+            <h2>Instructions</h2>
+            <ol style="font-weight: normal">
+              <li>
+                You may choose either to use a preset resolution or custom resolution that you require in your design. If you choose any preset resolution (extracted from CTA/CEA and VESA specification), the parameters will be populated automatically. Alternatively, you could import JSON file of previous calculation.
+              </li>
+              <li>
+                If you choose to customize, please populate all the required parameters, e.g., horizontal/vertical sync, blanking information, Refresh Rate, Color Format, etc. 
+              </li>
+              <li>
+                Press “Calculate” to calculate the Total Link Bandwidth Used (Gbps), as well as the required pixel clock for the target video resolution. You may export the JSON file as necessary.  
+              </li>
+              <li>Note that to determine the required Line Rate for each MIPI lane(s), you may divide the Total Link Bandwidth with number of lanes.</li>
+            </ol>
+          </div>
+        </div>
+        <!-- Main content row as flexbox -->
+        <div class="main-content-padded">
+          <!-- Centered Import JSON button for Video Timing page -->
+          <div
+            style="
+              width: 100%;
+              display: flex;
+              justify-content: center;
+              margin-top: 0.6rem;
+              margin-bottom: 0.9rem;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.4rem;
+              "
+            >
+              <button
+                id="vt-import-json-btn"
+                type="button"
+                class="action-btn"
+                style="width: 160px"
+              >
+                Import JSON
+              </button>
+              <input
+                id="vt-import-json-input"
+                type="file"
+                accept="application/json"
+                style="display: none"
+              />
+              <span
+                id="vt-import-status"
+                style="color: #50affc; font-size: 0.85em; min-height: 1.1em"
+              ></span>
+            </div>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              width: 100%;
+              margin-left: 0;
+              margin-top: 0;
+              position: relative;
+            "
+          >
+            <div class="container center-fields" style="position: relative">
+              <!-- Input & Output Container - Side by side layout -->
+              <div
+                style="
+                  display: flex;
+                  gap: 2rem;
+                  align-items: flex-start;
+                  width: 1100px;
+                  margin: 0 auto;
+                "
+              >
+                <div
+                  class="form-block"
+                  style="flex: 0 0 600px; width: 600px; margin-left: 150px"
+                >
+                  <form id="customResoForm">
+                    <!-- Two-column layout for input fields -->
+                    <div class="fields-section" style="gap: 5rem">
+                      <!-- Left column -->
+                      <div class="fields-col">
+                        <!-- Preset Resolution -->
+                        <div class="form-group">
+                          <label
+                            for="presetResolution"
+                            class="tooltip-container"
+                          >
+                            Preset Resolution
+                            <span class="tooltip-icon" style="font-size: 12px"
+                              >?</span
+                            >
+                            <div class="tooltip-text" style="font-size: 14px">
+                              <strong>Note:</strong>
+                              <ul>
+                                <li>
+                                  Reference Resolutions are based on the VESA
+                                  Display Monitor Timing Standard (Version 1.0,
+                                  Revision 12) and CEA-861-G specification.
+                                </li>
+                                <li>
+                                  CTA (Consumer Technology Association) is the
+                                  rebranded name (since 2015) of the CEA
+                                  (Consumer Electronics Association), which is
+                                  the organization that defines standards like
+                                  CTA-861 (formerly CEA-861) for video
+                                  interfaces such as HDMI.
+                                </li>
+                              </ul>
+                            </div>
+                          </label>
+                          <select id="presetResolution" name="presetResolution">
+                            <option value="Custom">Custom</option>
+                            <option value="CTA_1280_720_60">
+                              CTA/CEA 1280x720 @60Hz
+                            </option>
+                            <option value="CTA_1920_1080_60">
+                              CTA/CEA 1920x1080 @60Hz
+                            </option>
+                            <option value="VESA_3840_2160_30">
+                              VESA 3840x2160 @30Hz
+                            </option>
+                            <option value="VESA_3840_2160_60">
+                              VESA 3840x2160 @60Hz
+                            </option>
+                          </select>
+                        </div>
+                        <!-- Horizontal Blanking Components -->
+                        <div class="form-group">
+                          <label for="hSync">Horizontal Sync</label>
+                          <input
+                            type="number"
+                            id="hSync"
+                            name="hSync"
+                            min="0"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="hBackPorch">Horizontal Back Porch</label>
+                          <input
+                            type="number"
+                            id="hBackPorch"
+                            name="hBackPorch"
+                            min="0"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="hFrontPorch"
+                            >Horizontal Front Porch</label
+                          >
+                          <input
+                            type="number"
+                            id="hFrontPorch"
+                            name="hFrontPorch"
+                            min="0"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="TotalhBlank"
+                            >Total Horizontal Blanking</label
+                          >
+                          <input
+                            type="number"
+                            id="TotalhBlank"
+                            name="TotalhBlank"
+                          />
+                        </div>
+                        <!-- Vertical Blanking Components -->
+                        <div class="form-group">
+                          <label for="vSync">Vertical Sync</label>
+                          <input
+                            type="number"
+                            id="vSync"
+                            name="vSync"
+                            min="0"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="vBackPorch">Vertical Back Porch</label>
+                          <input
+                            type="number"
+                            id="vBackPorch"
+                            name="vBackPorch"
+                            min="0"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="vFrontPorch">Vertical Front Porch</label>
+                          <input
+                            type="number"
+                            id="vFrontPorch"
+                            name="vFrontPorch"
+                            min="0"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="TotalvBlank"
+                            >Total Vertical Blanking</label
+                          >
+                          <input
+                            type="number"
+                            id="TotalvBlank"
+                            name="TotalvBlank"
+                          />
+                        </div>
+                      </div>
+                      <!-- Right column (7 fields) -->
+                      <div class="fields-col">
+                        <div class="form-group">
+                          <label for="hActive">Horizontal Pixels</label>
+                          <input
+                            type="number"
+                            id="hPixels"
+                            name="hPixels"
+                            min="1"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="vActive">Vertical Lines</label>
+                          <input
+                            type="number"
+                            id="vLines"
+                            name="vLines"
+                            min="1"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="refreshRate">Refresh Rate (Hz)</label>
+                          <input
+                            type="number"
+                            id="refreshRate"
+                            name="refreshRate"
+                            min="1"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="colorFormat">Color Format</label>
+                          <select id="colorFormat" name="colorFormat" required>
+                            <option value="RGB666">RGB, 4:4:4, 6 BPC</option>
+                            <option value="RGB888">RGB, 4:4:4, 8 BPC</option>
+                            <option value="RGB101010">
+                              RGB, 4:4:4, 10 BPC
+                            </option>
+                            <option value="RGB121212">
+                              RGB, 4:4:4, 12 BPC
+                            </option>
+                            <option value="RGB161616">
+                              RGB, 4:4:4, 16 BPC
+                            </option>
+
+                            <option value="YCbCr444_8">
+                              YCbCr, 4:4:4, 8 BPC
+                            </option>
+                            <option value="YCbCr444_10">
+                              YCbCr, 4:4:4, 10 BPC
+                            </option>
+                            <option value="YCbCr444_12">
+                              YCbCr, 4:4:4, 12 BPC
+                            </option>
+                            <option value="YCbCr444_16">
+                              YCbCr, 4:4:4, 16 BPC
+                            </option>
+                            <option value="YCbCr422_8">
+                              YCbCr, 4:2:2, 8 BPC
+                            </option>
+                            <option value="YCbCr422_10">
+                              YCbCr, 4:2:2, 10 BPC
+                            </option>
+                            <option value="YCbCr422_12">
+                              YCbCr, 4:2:2, 12 BPC
+                            </option>
+                            <option value="YCbCr422_16">
+                              YCbCr, 4:2:2, 16 BPC
+                            </option>
+                            <option value="YCbCr420_8">
+                              YCbCr, 4:2:0, 8 BPC
+                            </option>
+                            <option value="YCbCr420_10">
+                              YCbCr, 4:2:0, 10 BPC
+                            </option>
+                            <option value="YCbCr420_12">
+                              YCbCr, 4:2:0, 12 BPC
+                            </option>
+                            <option value="YCbCr420_16">
+                              YCbCr, 4:2:0, 16 BPC
+                            </option>
+                            <option value="RAW8">RAW8</option>
+                            <option value="RAW10">RAW10</option>
+                            <option value="RAW12">RAW12</option>
+                            <option value="RAW14">RAW14</option>
+                            <option value="RAW16">RAW16</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="bitsPerPixel">Bits per Pixel</label>
+                          <input
+                            type="number"
+                            id="bitsPerPixel"
+                            name="bitsPerPixel"
+                            readonly
+                            style="
+                              background: #7c7c7c;
+                              color: #585858;
+                              cursor: not-allowed;
+                            "
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="pixelPerClock">Pixel Per Clock</label>
+                          <select
+                            id="pixelPerClock"
+                            name="pixelPerClock"
+                            required
+                          >
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="4">4</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Buttons outside the two-column layout -->
+                    <div
+                      class="button-row"
+                      style="
+                        margin-top: 1.5rem;
+                        margin-left: 250px;
+                        justify-content: center;
+                      "
+                    >
+                      <button type="button" id="clearButton" class="action-btn">
+                        Clear
+                      </button>
+
+                      <button
+                        type="button"
+                        id="calculateButton"
+                        class="action-btn"
+                      >
+                        Calculate
+                      </button>
+                    </div>
+                  </form>
+                  <div id="result"></div>
+                </div>
+                <!-- Right: Output Section -->
+                <div
+                  class="outputs-section"
+                  id="outputSection"
+                  style="display: none; min-width: 200px; max-width: 270px"
+                >
+                  <div class="output-group">
+                    <span class="output-label">Horizontal Total Pixel:</span>
+                    <span class="output-value" id="outHTotal">-</span>
+                  </div>
+                  <div class="output-group">
+                    <span class="output-label">Vertical Total Lines:</span>
+                    <span class="output-value" id="outVTotal">-</span>
+                  </div>
+                  <div class="output-group">
+                    <span class="output-label"
+                      >Total Pixel per Frame per Sec:</span
+                    >
+                    <span class="output-value" id="outTotalPixelPerSec">-</span>
+                  </div>
+                  <div class="output-group">
+                    <span class="output-label">Pixel Clock (MHz):</span>
+                    <span class="output-value" id="outPixelClock">-</span>
+                  </div>
+                  <div class="output-group">
+                    <span
+                      class="tooltip"
+                      tabindex="0"
+                      aria-label="Info about Total Link Bandwidth"
+                      style="
+                        position: relative;
+                        display: inline-block;
+                        margin-left: 0.1rem;
+                        color: #ecd24b;
+                        cursor: help;
+                        font-weight: bold;
+                        font-size: 0.8em;
+                      "
+                      >ⓘ
+                      <div
+                        class="tooltip-content"
+                        role="tooltip"
+                        style="
+                          visibility: hidden;
+                          position: absolute;
+                          left: 0;
+                          top: 1.6rem;
+                          z-index: 20;
+                          background: #fefbe8;
+                          color: #000;
+                          padding: 0.6rem;
+                          border-radius: 6px;
+                          border: 2px solid rgba(0, 0, 0, 0.08);
+                          width: 320px;
+                          font-weight: normal;
+                        "
+                      >
+                        <p>
+                          To use this value in MIPI Configuration, divide this
+                          value by your number of lanes.
+                        </p>
+                      </div>
+                    </span>
+                    <span class="output-label"
+                      >Total Link Bandwidth Used (Gbps):
+                    </span>
+                    <span class="output-value" id="outLinkBandwidthUsed"
+                      >-</span
+                    >
+                  </div>
+                  <!-- Export button now inside output container -->
+                  <div
+                    class="button-row"
+                    style="margin-top: 0.8rem; justify-content: center"
+                  >
+                    <button
+                      id="vt-export-json-btn"
+                      type="button"
+                      class="action-btn"
+                      style="min-width: 160px"
+                    >
+                      Export JSON
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="video_timing.js"></script>
+    <div id="imgModal" class="img-modal" style="display: none">
+      <span
+        class="img-modal-close"
+        id="imgModalClose"
+        style="
+          position: absolute;
+          top: 20px;
+          right: 40px;
+          font-size: 40px;
+          color: #fff;
+          cursor: pointer;
+          z-index: 11;
+        "
+        >&times;</span
+      >
+      <img
+        class="img-modal-content"
+        id="imgModalContent"
+        style="
+          max-width: 90vw;
+          max-height: 90vh;
+          margin: 0;
+          display: block;
+          border-radius: 8px;
+        "
+      />
+    </div>
+    <style>
+      .img-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .img-modal.show {
+        display: flex !important;
+      }
+      .img-modal-content {
+        max-width: 90vw;
+        max-height: 90vh;
+        margin: 0;
+        display: block;
+        border-radius: 8px;
+      }
+    </style>
+    <script>
+      // Replaced inline tooltip/modal script with a floating-tooltip implementation
+      // that appends the preview to document.body to escape stacking contexts,
+      // keeps it keyboard accessible, and reuses the existing per-page modal.
+      (function () {
+        const trigger = document.querySelector(".diagram-tooltip");
+        if (!trigger) return;
+        const originalContent = trigger.querySelector(
+          ".diagram-tooltip-content"
+        );
+        if (!originalContent) return;
+
+        // Hide the in-place content; we'll clone it into a floating element on demand
+        originalContent.style.display = "none";
+
+        const modal = document.getElementById("imgModal");
+        const modalImg = document.getElementById("imgModalContent");
+        const modalClose = document.getElementById("imgModalClose");
+
+        let floating = null;
+        let hideTimer = null;
+
+        function fitImageToViewport() {
+          try {
+            const padding = 48;
+            const maxW = Math.max(window.innerWidth * 0.9 - padding, 100);
+            const maxH = Math.max(window.innerHeight * 0.9 - padding, 100);
+            const natW = modalImg.naturalWidth || modalImg.width || maxW;
+            const natH = modalImg.naturalHeight || modalImg.height || maxH;
+            const scale = Math.min(maxW / natW, maxH / natH, 1);
+            modalImg.style.width = Math.round(natW * scale) + "px";
+            modalImg.style.height = Math.round(natH * scale) + "px";
+            modalImg.style.objectFit = "contain";
+            modalImg.style.transform = "";
+            modalImg.style.transformOrigin = "";
+            modalImg.style.margin = "0";
+          } catch (err) {
+            modalImg.style.width = "";
+            modalImg.style.height = "";
+            modalImg.style.transform = "";
+          }
+        }
+
+        function openModal(src, alt) {
+          modalImg.style.width = "";
+          modalImg.style.height = "";
+          modalImg.alt = alt || "";
+          modal.classList.add("show");
+          modalImg.onload = function () {
+            fitImageToViewport();
+            try {
+              modalClose.focus();
+            } catch (e) {}
+          };
+          modalImg.src = src;
+          if (modalImg.complete) {
+            fitImageToViewport();
+          }
+        }
+
+        function closeModal() {
+          modal.classList.remove("show");
+          modalImg.src = "";
+          modalImg.onload = null;
+          modalImg.style.width = "";
+          modalImg.style.height = "";
+          modalImg.style.transform = "";
+        }
+
+        function positionFloating() {
+          if (!floating) return;
+          const rect = trigger.getBoundingClientRect();
+          let left = rect.left + window.scrollX;
+          let top = rect.bottom + window.scrollY + 6;
+          const fw = floating.offsetWidth;
+          const fh = floating.offsetHeight;
+          if (left + fw > window.scrollX + window.innerWidth - 8) {
+            left = Math.max(window.scrollX + window.innerWidth - fw - 8, 8);
+          }
+          if (top + fh > window.scrollY + window.innerHeight - 8) {
+            top = rect.top + window.scrollY - fh - 6;
+          }
+          floating.style.left = Math.round(left) + "px";
+          floating.style.top = Math.round(top) + "px";
+        }
+
+        function removeFloating() {
+          if (!floating) return;
+          try {
+            document.body.removeChild(floating);
+          } catch (e) {}
+          floating = null;
+        }
+
+        function createFloating() {
+          if (floating) return floating;
+          floating = originalContent.cloneNode(true);
+          floating.style.display = "block";
+          floating.style.position = "absolute";
+          floating.style.zIndex = "4000";
+          floating.style.minWidth = "";
+          floating.setAttribute("tabindex", "0");
+          // Remove ids to avoid collisions
+          floating
+            .querySelectorAll("[id]")
+            .forEach((el) => el.removeAttribute("id"));
+          document.body.appendChild(floating);
+
+          // Position after appended so sizes are available
+          positionFloating();
+
+          // Keep tooltip open while hovering either trigger or floating
+          trigger.addEventListener("mouseleave", onMaybeHide);
+          trigger.addEventListener("blur", onMaybeHide);
+
+          floating.addEventListener("mouseenter", function () {
+            if (hideTimer) {
+              clearTimeout(hideTimer);
+              hideTimer = null;
+            }
+          });
+          floating.addEventListener("mouseleave", onMaybeHide);
+          floating.addEventListener("focus", function () {
+            if (hideTimer) {
+              clearTimeout(hideTimer);
+              hideTimer = null;
+            }
+          });
+          floating.addEventListener("blur", onMaybeHide);
+
+          const img = floating.querySelector("img");
+          if (img) {
+            img.style.cursor = "zoom-in";
+            img.addEventListener("click", function (e) {
+              e.stopPropagation();
+              openModal(img.src, img.alt || "");
+              removeFloating();
+            });
+            img.addEventListener("keydown", function (e) {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                openModal(img.src, img.alt || "");
+                removeFloating();
+              }
+            });
+            img.setAttribute("tabindex", "0");
+          }
+
+          floating.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+              const img2 = floating.querySelector("img");
+              if (img2 && img2.src) {
+                e.preventDefault();
+                openModal(img2.src, img2.alt || "");
+                removeFloating();
+              }
+            }
+          });
+
+          setTimeout(() => {
+            document.addEventListener("click", onDocClick);
+          }, 0);
+
+          return floating;
+        }
+
+        function onDocClick(e) {
+          if (!floating) return;
+          if (trigger.contains(e.target)) return;
+          if (floating.contains(e.target)) return;
+          removeFloating();
+        }
+
+        function onMaybeHide() {
+          if (hideTimer) clearTimeout(hideTimer);
+          hideTimer = setTimeout(() => {
+            const active = document.activeElement;
+            if (
+              floating &&
+              !trigger.matches(":hover") &&
+              !floating.matches(":hover") &&
+              active !== floating &&
+              !floating.contains(active)
+            ) {
+              removeFloating();
+            }
+          }, 150);
+        }
+
+        // Show floating on hover or focus
+        trigger.addEventListener("mouseenter", function () {
+          createFloating();
+        });
+        trigger.addEventListener("focus", function () {
+          createFloating();
+        });
+
+        // Click on the trigger should open modal too (fallback)
+        trigger.addEventListener("click", function (e) {
+          e.stopPropagation();
+          const img = originalContent.querySelector("img");
+          if (img && img.src) {
+            openModal(img.src, img.alt || "");
+          }
+          removeFloating();
+        });
+
+        // Close modal handlers
+        modalClose.addEventListener("click", closeModal);
+        modal.addEventListener("click", function (e) {
+          if (e.target === modal) closeModal();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") closeModal();
+        });
+
+        // Reposition floating on resize/scroll while visible
+        window.addEventListener("resize", function () {
+          if (modal.classList.contains("show") && modalImg.naturalWidth)
+            fitImageToViewport();
+          if (floating) positionFloating();
+        });
+        window.addEventListener(
+          "scroll",
+          function () {
+            if (floating) positionFloating();
+          },
+          { passive: true }
+        );
+
+        // Ensure image recenters on viewport resize while modal open
+        window.addEventListener("resize", () => {
+          if (modal.classList.contains("show")) fitImageToViewport();
+        });
+      })();
+    </script>
+    <!-- Add small JS to toggle tooltip visibility on focus/click for keyboard accessibility -->
+    <script>
+      (function () {
+        document.querySelectorAll(".tooltip").forEach(function (t) {
+          var content = t.querySelector(".tooltip-content");
+          if (!content) return;
+          t.addEventListener("mouseenter", function () {
+            content.style.visibility = "visible";
+          });
+          t.addEventListener("mouseleave", function () {
+            content.style.visibility = "hidden";
+          });
+          t.addEventListener("focus", function () {
+            content.style.visibility = "visible";
+          });
+          t.addEventListener("blur", function () {
+            content.style.visibility = "hidden";
+          });
+          t.addEventListener("click", function (e) {
+            // toggle on click
+            content.style.visibility =
+              content.style.visibility === "visible" ? "hidden" : "visible";
+            e.stopPropagation();
+          });
+        });
+        // hide tooltips when clicking elsewhere
+        document.addEventListener("click", function () {
+          document
+            .querySelectorAll(".tooltip .tooltip-content")
+            .forEach(function (c) {
+              c.style.visibility = "hidden";
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>

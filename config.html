@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MIPI Configuration</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="imgs/favicon.ico" />
+  </head>
+  <body>
+    <!-- Banner/Header -->
+    <header class="main-banner">
+      <div class="banner-content">
+        <!--Logo and navigation-->
+        <div style="display: flex; align-items: center">
+          <a href="https://www.latticesemi.com/" target="_blank" rel="noopener">
+            <img
+              src="imgs/Lattice Logo Yellow_White.png"
+              alt="Lattice Semiconductor Logo"
+              class="banner-logo"
+            />
+          </a>
+          <nav class="top-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="config.html" class="nav-link">MIPI Configuration</a>
+            <a href="dphy.html" class="nav-link">D-PHY Timing Parameters</a>
+            <a href="video_timing.html" class="nav-link">Video Timing</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <!-- Main content container to separate from background -->
+    <div class="index-bg-container" style="padding-bottom: 5rem">
+      <!-- Top description row as flexbox, matching video_timing.html -->
+      <div
+        class="index-description-row"
+        style="
+          display: flex;
+          flex-direction: row;
+          gap: 2rem;
+          width: 100%;
+          justify-content: center;
+          margin-bottom: 1.2rem;
+        "
+      >
+        <!-- Description column -->
+        <div
+          class="description-box"
+          style="
+            max-width: 380px;
+            min-width: 260px;
+            margin-top: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+          "
+        >
+          <h2 style="display: flex; align-items: center; gap: 0.6rem">
+            User Configuration
+            <span
+              class="diagram-tooltip"
+              tabindex="0"
+              aria-label="Open MIPI diagram"
+              style="
+                display: inline-block;
+                position: relative;
+                color: #ecd24b;
+                font-weight: bold;
+                cursor: pointer;
+              "
+            >
+              ⓘ
+              <div
+                class="diagram-tooltip-content"
+                style="
+                  display: none;
+                  position: absolute;
+                  left: 0;
+                  z-index: 30;
+                  background: #fefbe8;
+                  color: #000;
+                  padding: 0.6rem;
+                  border-radius: 6px;
+                  border: 1px solid rgba(0, 0, 0, 0.08);
+                  width: 320px;
+                "
+              >
+                <div style="font-weight: bold; margin-bottom: 0.4rem">
+                  MIPI Block Diagram
+                </div>
+                <img
+                  src="imgs/mipi-block-diagram.png"
+                  alt="MIPI Block Diagram"
+                  style="
+                    width: 100%;
+                    height: auto;
+                    display: block;
+                    cursor: zoom-in;
+                    border-radius: 4px;
+                  "
+                />
+                <div
+                  style="
+                    text-align: right;
+                    margin-top: 6px;
+                    font-size: 0.5em;
+                    color: #666;
+                  "
+                >
+                  Click the tooltip icon to open and zoom
+                </div>
+              </div>
+            </span>
+          </h2>
+          <p style="font-weight: normal">
+            This page enables you to calculate MIPI bandwidth and clock frequencies for Lattice devices (Soft D-PHY) based on your input parameters. The resulting information can be used when configuring the following IP cores in Radiant:
+          </p>
+          <div style="margin-top: 1rem; font-weight: normal">
+            <a
+              href="https://www.latticesemi.com/Products/DesignSoftwareAndIP/IntellectualProperty/IPCore/IPCores04/BytetoPixelConverter/"
+              target="_blank"
+              rel="noopener"
+              style="color: #50affc; text-decoration: underline"
+              >Lattice Byte-to-Pixel Converter IP</a
+            >
+            <br /><br />
+            <a
+              href="https://www.latticesemi.com/Products/DesignSoftwareAndIP/IntellectualProperty/IPCore/IPCores04/PixeltoByteConverter/"
+              target="_blank"
+              rel="noopener"
+              style="color: #50affc; text-decoration: underline"
+              >Lattice Pixel-to-Byte Converter IP</a
+            >
+          </div>
+        </div>
+        <!-- Instructions column -->
+        <div
+          class="description-box"
+          style="
+            max-width: 380px;
+            min-width: 260px;
+            margin-top: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+          "
+        >
+          <h2>Instructions</h2>
+          <ol style="font-weight: normal">
+            <li>Select your device from the Device dropdown menu or simply import JSON file of previous calculation. Note that valid MIPI line rate range is dependent on this device/package/speed selection. </li>
+            <li>Enter the respective parameters in the input fields.</li>
+            <li>
+              Pressing "Calculate" will display the values for Bits per Clock, D-PHY Clock, Pixel Clock Frequency and Byte Clock Frequency. You may export the JSON file as necessary. 
+            </li>
+            <li>When configuring the Byte-to-Pixel or Pixel-to-Byte IP, ensure that all relevant parameters align with the MIPI D-PHY module or the CSI-2/DSI TX/RX IP configuration in your design. </li>
+          </ol>
+        </div>
+      </div>
+      <!-- Centered Import JSON button row -->
+      <div
+        id="config-import-json-container"
+        style="
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          margin-top: 0.6rem;
+          margin-bottom: 0.6rem;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+          "
+        >
+          <button
+            id="import-json-btn"
+            type="button"
+            class="action-btn"
+            style="width: 160px"
+          >
+            Import JSON
+          </button>
+          <input
+            id="import-json-input"
+            type="file"
+            accept="application/json"
+            style="display: none"
+          />
+          <span
+            id="import-status"
+            style="color: #50affc; font-size: 0.85em; min-height: 1.1em"
+          ></span>
+        </div>
+      </div>
+      <!-- Device/package/speed dropdowns container (now includes mode selector) -->
+      <div
+        id="dropdowns-container"
+        style="
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          margin-top: 1.2rem;
+          margin-bottom: 1.2rem;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            min-width: 340px;
+            margin-right: 9rem;
+          "
+        >
+          <div
+            id="mode-row"
+            style="display: flex; align-items: center; gap: 0.7rem; width: 100%"
+          >
+            <label
+              for="mode-select"
+              style="font-weight: bold; font-size: 1em; min-width: 90px"
+              >Mode:</label
+            >
+            <select
+              id="mode-select"
+              style="
+                font-size: 1em;
+                padding: 0.3rem 1.2rem;
+                border-radius: 0.4rem;
+                width: 260px;
+              "
+            >
+              <option value="user-config" selected>User Configuration</option>
+              <option value="pxb">Pixel-Byte Frequency Calculator</option>
+            </select>
+          </div>
+          <div
+            id="device-row"
+            style="display: flex; align-items: center; gap: 0.7rem; width: 100%"
+          >
+            <label
+              for="device-select"
+              style="font-weight: bold; font-size: 1em; min-width: 90px"
+              >Device:</label
+            >
+            <select
+              id="device-select"
+              name="device"
+              style="
+                font-size: 1em;
+                padding: 0.3rem 1.2rem;
+                border-radius: 0.4rem;
+                width: 260px;
+              "
+            >
+              <option value="" selected>-- Select Device --</option>
+              <option value="CrossLink-NX">CrossLink-NX</option>
+              <option value="Avant">Avant</option>
+              <option value="CertusPro-NX_MachXO5">
+                CertusPro-NX / MachXO5
+              </option>
+              <option value="Certus-NX">Certus-NX</option>
+            </select>
+          </div>
+          <div
+            id="package-row"
+            style="display: flex; align-items: center; gap: 0.7rem; width: 100%"
+          >
+            <label
+              for="package-select"
+              style="font-weight: bold; font-size: 1em; min-width: 90px"
+              >Package:</label
+            >
+            <select
+              id="package-select"
+              style="
+                font-size: 1em;
+                padding: 0.3rem 1.2rem;
+                border-radius: 0.4rem;
+                width: 260px;
+              "
+            >
+              <option value="" selected>-- Select Package --</option>
+              <option value="WLCSP84">WLCSP84</option>
+              <option value="FCCSP104">FCCSP104</option>
+              <option value="QFN72">QFN72 / WLCSP72</option>
+              <option value="otherLIFCL">
+                csfBGA121 / caBGA256/400 / csBGA289
+              </option>
+            </select>
+          </div>
+          <div
+            id="speed-row"
+            style="display: flex; align-items: center; gap: 0.7rem; width: 100%"
+          >
+            <label
+              for="speed-select"
+              style="font-weight: bold; font-size: 1em; min-width: 90px"
+              >Speed:</label
+            >
+            <select
+              id="speed-select"
+              style="
+                font-size: 1em;
+                padding: 0.3rem 1.2rem;
+                border-radius: 0.4rem;
+                width: 260px;
+              "
+            >
+              <option value="" selected>-- Select Speed --</option>
+              <option value="speed_7">7</option>
+              <option value="speed_8">8</option>
+              <option value="speed_9">9</option>
+            </select>
+          </div>
+          <!-- Reminder message for line rate range -->
+          <div
+            id="line-rate-reminder"
+            style="
+              width: 30rem;
+              text-align: center;
+              margin-bottom: 0.1rem;
+              font-size: 1em;
+              color: #fcdf50;
+              font-weight: bold;
+            "
+          >
+            Note: Valid range for TX/RX Line Rate (Mbps) is currently
+            <span id="line-rate-range"></span> and will update automatically
+            based on your selected Device, Package and Speed Grade.
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================
+        MAIN USER CONFIGURATION SECTION
+        ===================== -->
+      <div id="user-config-section">
+        <div class="main-content-row">
+          <!-- Center: Input/output container -->
+          <div
+            class="container center-fields"
+            style="
+              background: linear-gradient(
+                to bottom right,
+                #000000,
+                #363636 70%
+              );
+            "
+          >
+            <div class="input-fields-wrapper">
+              <div
+                class="fields-section"
+                style="
+                  display: flex;
+                  flex-direction: row;
+                  gap: 3rem;
+                  flex-wrap: wrap;
+                  align-self: center;
+                "
+              >
+                <!-- Left input column -->
+                <div
+                  class="fields-col"
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.2rem;
+                    min-width: 220px;
+                    flex: 1 1 220px;
+                    margin-top: 0px;
+                  "
+                >
+                  <!-- 1. TX/RX Line Rate (Mbps) -->
+                  <div class="field-group">
+                    <label
+                      for="input1"
+                      style="display: flex; align-items: center; gap: 0.4rem"
+                    >
+                      TX/RX Line Rate (Mbps)
+                      <span
+                        class="diagram-tooltip"
+                        tabindex="0"
+                        aria-label="Open Line Rate diagram"
+                        style="
+                          display: inline-block;
+                          position: relative;
+                          color: #fcdf50;
+                          font-weight: bold;
+                          cursor: pointer;
+                          font-size: 0.9em;
+                        "
+                      >
+                        ⓘ
+                        <div
+                          class="diagram-tooltip-content"
+                          style="
+                            display: none;
+                            position: absolute;
+                            left: 0;
+                            z-index: 1200;
+                            background: #fefbe8;
+                            color: #000;
+                            padding: 0.6rem;
+                            border-radius: 6px;
+                            border: 1px solid rgba(0, 0, 0, 0.08);
+                            width: 320px;
+                          "
+                        >
+                          <div style="font-weight: bold; margin-bottom: 0.4rem">
+                            Line Rate Information
+                          </div>
+                          <img
+                            src="imgs/linerate.png"
+                            alt="Line Rate diagram"
+                            style="
+                              width: 100%;
+                              height: auto;
+                              display: block;
+                              cursor: zoom-in;
+                              border-radius: 4px;
+                            "
+                          />
+                          <div
+                            style="
+                              text-align: right;
+                              margin-top: 6px;
+                              font-size: 0.8em;
+                              color: #666;
+                            "
+                          >
+                            Click to open and zoom
+                          </div>
+                        </div>
+                      </span>
+                    </label>
+                    <input
+                      type="number"
+                      id="input1"
+                      min="160"
+                      max="861"
+                      step="1"
+                      autocomplete="off"
+                      placeholder="160-861"
+                      value="160"
+                    />
+                    <div class="error-message" id="error1"></div>
+                  </div>
+                  <!-- 2. Number of Lanes -->
+                  <div class="field-group">
+                    <label for="input2">Number of Lanes</label>
+                    <select id="input2" autocomplete="off">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="4">4</option>
+                    </select>
+                    <div class="error-message" id="error2"></div>
+                  </div>
+                  <!-- 3. Number of Gear (fixed at 8 or selectable) -->
+                  <div class="field-group" id="gear-group">
+                    <label for="input3">Number of Gear</label>
+                    <select id="input3">
+                      <option value="8">8</option>
+                      <option value="16">16</option>
+                    </select>
+                    <input
+                      type="number"
+                      id="input3-fixed"
+                      value="8"
+                      readonly
+                      style="display: none"
+                    />
+                    <div class="error-message" id="error3"></div>
+                  </div>
+                </div>
+                <!-- Right input column -->
+                <div
+                  class="fields-col"
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.2rem;
+                    min-width: 220px;
+                    flex: 1 1 220px;
+                    margin-top: -0.17rem;
+                  "
+                >
+                  <!-- 4. Data Type dropdown -->
+                  <div class="field-group">
+                    <label for="input4"
+                      >Data Type
+                      <span
+                        class="tooltip"
+                        tabindex="0"
+                        aria-label="Supported Data Types"
+                        style="
+                          position: relative;
+                          display: inline-block;
+                          margin-left: 0.5rem;
+                          color: #ecd24b;
+                          cursor: help;
+                          font-weight: bold;
+                          font-size: 1.1em;
+                        "
+                      >
+                        ⓘ
+                        <div
+                          class="tooltip-content"
+                          role="tooltip"
+                          style="
+                            visibility: hidden;
+                            position: absolute;
+                            left: 0;
+                            top: 1.6rem;
+                            z-index: 20;
+                            background: #fefbe8;
+                            color: #000;
+                            padding: 0.6rem;
+                            border-radius: 6px;
+                            border: 1px solid rgba(0, 0, 0, 0.08);
+                            width: 320px;
+                          "
+                        >
+                          <div style="font-weight: bold; margin-bottom: 0.4rem">
+                            Supported Data Type Table
+                          </div>
+                          <table
+                            class="table-border"
+                            style="
+                              width: 100%;
+                              border-collapse: collapse;
+                              font-size: 0.9em;
+                            "
+                          >
+                            <tbody>
+                              <tr style="font-weight: bold">
+                                <td style="padding: 4px">CSI-2 Data Type</td>
+                                <td style="padding: 4px">Pixel Width</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RAW8</td>
+                                <td style="padding: 4px">8</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RAW10</td>
+                                <td style="padding: 4px">10</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RAW12</td>
+                                <td style="padding: 4px">12</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RAW14</td>
+                                <td style="padding: 4px">14</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RAW16</td>
+                                <td style="padding: 4px">16</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">YUV_420_8</td>
+                                <td style="padding: 4px">8</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">YUV_420_10</td>
+                                <td style="padding: 4px">10</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">YUV_422_8</td>
+                                <td style="padding: 4px">8</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">YUV_422_10</td>
+                                <td style="padding: 4px">10</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RGB888</td>
+                                <td style="padding: 4px">24</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </span>
+                    </label>
+                    <select id="input4" style="height: 2rem">
+                      <option value="RAW8" selected>RAW8</option>
+                      <option value="RAW10">RAW10</option>
+                      <option value="RAW12">RAW12</option>
+                      <option value="RAW14">RAW14</option>
+                      <option value="RAW16">RAW16</option>
+                      <option value="YUV_420_8">YUV_420_8</option>
+                      <option value="YUV_420_10">YUV_420_10</option>
+                      <option value="YUV_422_8">YUV_422_8</option>
+                      <option value="YUV_422_10">YUV_422_10</option>
+                      <option value="RGB888">RGB888</option>
+                    </select>
+                    <div class="error-message" id="error4"></div>
+                  </div>
+                  <!-- 5. Pixel per Clock -->
+                  <div class="field-group">
+                    <label for="input5">Pixel per Clock</label>
+                    <select id="input5" autocomplete="off">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="4">4</option>
+                      <option value="6">6</option>
+                      <option value="8">8</option>
+                      <option value="10">10</option>
+                    </select>
+                    <div class="error-message" id="error5"></div>
+                  </div>
+                </div>
+              </div>
+              <!-- Buttons row below both input columns -->
+              <div
+                class="button-row"
+                style="
+                  display: flex;
+                  flex-direction: row;
+                  gap: 0rem;
+                  margin-top: 1.2rem;
+                  justify-content: flex-start;
+                "
+              >
+                <button
+                  id="clear-btn"
+                  class="action-btn"
+                  style="margin-left: 6.5rem; width: 7rem"
+                >
+                  Clear
+                </button>
+                <button id="calculate-btn" class="action-btn">Calculate</button>
+              </div>
+              <!-- Output section (hidden by default, stays below buttons) -->
+              <div
+                class="outputs-section"
+                id="outputs-section"
+                style="
+                  display: none;
+                  background-color: #fefbe8;
+                  margin-top: 1.2rem;
+                  margin-left: auto;
+                  margin-right: auto;
+                  font-size: 16px;
+                  text-align: center;
+                  max-width: 400px;
+                "
+              >
+                <div class="output-group">
+                  <div class="output-label">Number of Bits/Clock</div>
+                  <div class="output-value" id="output1"></div>
+                </div>
+                <div class="output-group">
+                  <div class="output-label">D_PHY Clock (MHz)</div>
+                  <div class="output-value" id="output2"></div>
+                </div>
+                <div class="output-group">
+                  <div class="output-label">Pixel Clock Frequency (MHz)</div>
+                  <div class="output-value" id="output3"></div>
+                </div>
+                <div class="output-group">
+                  <div class="output-label">Byte Clock Frequency</div>
+                  <div class="output-value" id="output4"></div>
+                </div>
+                <!-- Added export button below outputs -->
+                <div
+                  class="button-row"
+                  style="margin-top: 0.8rem; justify-content: center"
+                >
+                  <button type="button" id="export-json-btn" class="action-btn">
+                    Export JSON
+                  </button>
+                </div>
+                <!-- Added Radiant parameters section -->
+                <div style="margin-top: 1rem; text-align: center">
+                  <div
+                    style="
+                      color: #666666;
+                      font-size: 0.9em;
+                      font-weight: normal;
+                      font-style: italic;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Where should I put these parameters in Radiant?
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      gap: 2rem;
+                      align-items: center;
+                    "
+                  >
+                    <div
+                      style="
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.3rem;
+                      "
+                    >
+                      <span
+                        style="
+                          color: #000;
+                          font-size: 0.9em;
+                          font-weight: normal;
+                        "
+                        >1. Pixel-to-Byte</span
+                      >
+                      <span
+                        class="p2b-tooltip"
+                        tabindex="0"
+                        aria-label="Preview Pixel-to-Byte diagram"
+                        style="
+                          color: #fcdf50;
+                          font-weight: bold;
+                          cursor: pointer;
+                          position: relative;
+                        "
+                      >
+                        ⓘ
+                        <div
+                          class="p2b-tooltip-content"
+                          style="
+                            display: none;
+                            position: absolute;
+                            left: 0;
+                            z-index: 1200;
+                            background: #fefbe8;
+                            color: #000;
+                            padding: 0.6rem;
+                            border-radius: 6px;
+                            border: 1px solid rgba(0, 0, 0, 0.08);
+                            width: 320px;
+                          "
+                        >
+                          <div style="font-weight: bold; margin-bottom: 0.4rem">
+                            Pixel-to-Byte Parameters
+                          </div>
+                          <img
+                            src="imgs/p2b.png"
+                            alt="Pixel-to-Byte Parameters"
+                            style="
+                              width: 100%;
+                              height: auto;
+                              display: block;
+                              cursor: zoom-in;
+                              border-radius: 4px;
+                            "
+                          />
+                        </div>
+                      </span>
+                    </div>
+                    <div
+                      style="
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.3rem;
+                      "
+                    >
+                      <span
+                        style="
+                          color: #000;
+                          font-size: 0.9em;
+                          font-weight: normal;
+                        "
+                        >2. Byte-to-Pixel</span
+                      >
+                      <span
+                        class="b2p-tooltip"
+                        tabindex="0"
+                        aria-label="Preview Byte-to-Pixel diagram"
+                        style="
+                          color: #fcdf50;
+                          font-weight: bold;
+                          cursor: pointer;
+                          position: relative;
+                        "
+                      >
+                        ⓘ
+                        <div
+                          class="b2p-tooltip-content"
+                          style="
+                            display: none;
+                            position: absolute;
+                            left: 0;
+                            z-index: 1200;
+                            background: #fefbe8;
+                            color: #000;
+                            padding: 0.6rem;
+                            border-radius: 6px;
+                            border: 1px solid rgba(0, 0, 0, 0.08);
+                            width: 320px;
+                          "
+                        >
+                          <div style="font-weight: bold; margin-bottom: 0.4rem">
+                            Byte-to-Pixel Parameters
+                          </div>
+                          <img
+                            src="imgs/b2p.png"
+                            alt="Byte-to-Pixel Parameters"
+                            style="
+                              width: 100%;
+                              height: auto;
+                              display: block;
+                              cursor: zoom-in;
+                              border-radius: 4px;
+                            "
+                          />
+                        </div>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- =====================
+        PIXEL-BYTE FREQUENCY CALCULATOR SECTION
+        To add new calculators or fields, edit the forms below.
+        ===================== -->
+      <div id="pxb-section" style="display: none">
+        <main>
+          <div style="display: flex; width: 100%; justify-content: center">
+            <!-- Description and instructions: update as needed -->
+            <div
+              class="description-box"
+              style="
+                top: 735px;
+                left: 500px;
+                width: 350px;
+                text-justify: distribute-all-lines;
+                margin-top: 1rem;
+              "
+            >
+              <div class="desc-title">Pixel-Byte Frequency Calculator</div>
+              <div class="desc-text" style="font-weight: normal">
+                This page allows you to calculate the pixel interface or byte interface bandwidth based on the input parameters. The resulting information can be used when configuring the following IP cores in Radiant:<br />
+                <br />
+                <a
+                  href="https://www.latticesemi.com/Products/DesignSoftwareAndIP/IntellectualProperty/IPCore/IPCores04/BytetoPixelConverter/"
+                  target="_blank"
+                  rel="noopener"
+                  style="color: #50affc; text-decoration: underline"
+                  >Lattice Byte-to-Pixel Converter (B2P) IP</a
+                >
+                <br /><br />
+                <a
+                  href="https://www.latticesemi.com/Products/DesignSoftwareAndIP/IntellectualProperty/IPCore/IPCores04/PixeltoByteConverter/"
+                  target="_blank"
+                  rel="noopener"
+                  style="color: #50affc; text-decoration: underline"
+                  >Lattice Pixel-to-Byte Converter (P2B) IP</a
+                >
+                <br /><br />
+              </div>
+            </div>
+            <div
+              class="description-box"
+              style="
+                text-justify: distribute-all-lines;
+                margin-left: 3rem;
+                margin-top: 1rem;
+              "
+            >
+              <div class="desc-title">Usage Instructions</div>
+              <div class="desc-text" style="font-weight: normal">
+                1. Enter the parameter values in their respective fields.<br />
+                2. Click the “Calculate” button to calculate the bandwidth.<br />
+                3. View the results, which will be displayed below the input fields.<br />
+                4. Recommendation: The pixel and byte interfaces should ideally have equivalent bandwidth.<br />
+                - If this cannot be achieved due to design constraints, configure the transmit interface (pixel interface for B2P IP or byte interface for P2B IP) with a slightly higher bandwidth.<br />
+                - The internal FIFO is automatically configured to absorb any read/write timing differences. <br />
+              </div>
+            </div>
+          </div>
+
+          <div
+            style="
+              display: flex;
+              gap: 0rem;
+              justify-content: center;
+              flex-wrap: wrap;
+              margin-top: 0.1rem;
+              position: relative;
+              padding: 0 1rem;
+            "
+          >
+            <!-- Input to P2B Calculator: add new fields or logic here -->
+            <div
+              class="bandwidth-card"
+              style="min-width: 320px; flex: 1 1 320px; max-width: 320px"
+            >
+              <div
+                style="
+                  font-weight: bold;
+                  font-size: 1.1em;
+                  text-align: center;
+                  margin-bottom: 1rem;
+                "
+              >
+                Pixel Interface Bandwidth of P2B/B2P IP
+              </div>
+              <form id="bandwidth-form" autocomplete="off">
+                <div class="bandwidth-fields">
+                  <div class="field-group">
+                    <label for="pixel-clock">Pixel Clock (MHz):</label>
+                    <input
+                      type="number"
+                      id="pixel-clock"
+                      min="0"
+                      step="any"
+                      placeholder="Insert number here"
+                    />
+                  </div>
+                  <div class="field-group">
+                    <label for="ppc">Number of Output Pixel Lanes:</label>
+                    <input
+                      type="number"
+                      id="ppc"
+                      min="1"
+                      step="1"
+                      placeholder="Insert number here"
+                    />
+                  </div>
+                  <div class="field-group">
+                    <label for="bpc"
+                      >Bits Per Pixel (BPP):
+                      <span
+                        class="tooltip"
+                        tabindex="0"
+                        aria-label="Supported Data Types"
+                        style="
+                          position: relative;
+                          display: inline-block;
+                          margin-left: 0.5rem;
+                          color: #ecd24b;
+                          cursor: help;
+                          font-weight: bold;
+                          font-size: 1.1em;
+                        "
+                        >ⓘ
+                        <div
+                          class="tooltip-content"
+                          role="tooltip"
+                          style="
+                            visibility: hidden;
+                            position: absolute;
+                            left: 0;
+                            top: 1.6rem;
+                            z-index: 20;
+                            background: #fefbe8;
+                            color: #000;
+                            padding: 0.6rem;
+                            border-radius: 6px;
+                            border: 1px solid rgba(0, 0, 0, 0.08);
+                            width: 320px;
+                          "
+                        >
+                          <div style="font-weight: bold; margin-bottom: 0.4rem">
+                            Supported Data Type Table
+                          </div>
+                          <table
+                            class="table-border"
+                            style="
+                              width: 100%;
+                              border-collapse: collapse;
+                              font-size: 0.9em;
+                            "
+                          >
+                            <tbody>
+                              <tr style="font-weight: bold">
+                                <td style="padding: 4px">CSI-2 Data Type</td>
+                                <td style="padding: 4px">Pixel Width</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RAW8</td>
+                                <td style="padding: 4px">8</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RAW10</td>
+                                <td style="padding: 4px">10</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RAW12</td>
+                                <td style="padding: 4px">12</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RAW14</td>
+                                <td style="padding: 4px">14</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RAW16</td>
+                                <td style="padding: 4px">16</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">YUV_420_8</td>
+                                <td style="padding: 4px">8</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">YUV_420_10</td>
+                                <td style="padding: 4px">10</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">YUV_422_8</td>
+                                <td style="padding: 4px">8</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">YUV_422_10</td>
+                                <td style="padding: 4px">10</td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 4px">RGB888</td>
+                                <td style="padding: 4px">24</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </span>
+                    </label>
+                    <input
+                      type="number"
+                      id="bpc"
+                      min="1"
+                      step="1"
+                      placeholder="Insert number here"
+                    />
+                  </div>
+                </div>
+                <div class="bandwidth-buttons">
+                  <button type="button" id="calc-p2b-btn" class="action-btn">
+                    Calculate
+                  </button>
+                  <button type="reset" class="action-btn">Clear</button>
+                </div>
+                <div class="bandwidth-output-group">
+                  <label>Bandwidth (Mbps):</label>
+                  <span id="bandwidth-output"></span>
+                </div>
+                <div
+                  id="p2b-reminder"
+                  style="
+                    display: none;
+                    margin-top: 1rem;
+                    padding: 0.8rem;
+                    background: #fffbea;
+                    border-left: 4px solid #fcdf50;
+                    border-radius: 4px;
+                    color: #333;
+                    font-size: 0.9em;
+                    line-height: 1.5;
+                    width: fit-content;
+                  "
+                >
+                  <strong>💡 Tip:</strong> Ensure both resulting bandwidth are
+                  equal
+                </div>
+              </form>
+            </div>
+            <!-- Output to B2P Calculator: add new fields or logic here -->
+            <div
+              class="bandwidth-card"
+              style="min-width: 320px; flex: 1 1 320px; max-width: 400px"
+            >
+              <div
+                style="
+                  font-weight: bold;
+                  font-size: 1.1em;
+                  text-align: center;
+                  margin-bottom: 1rem;
+                "
+              >
+                Byte Interface Bandwidth of P2B/B2P IP
+              </div>
+              <form id="b2p-form" autocomplete="off">
+                <div class="bandwidth-fields">
+                  <div class="field-group">
+                    <label for="byte-clock">Byte Clock (MHz):</label>
+                    <input
+                      type="number"
+                      id="byte-clock"
+                      min="0"
+                      step="any"
+                      placeholder="Insert number here"
+                    />
+                  </div>
+                  <div class="field-group">
+                    <label for="num-lanes">Number of TX/RX Lanes:</label>
+                    <input
+                      type="number"
+                      id="num-lanes"
+                      min="1"
+                      step="1"
+                      placeholder="Insert number here"
+                    />
+                  </div>
+                  <div class="field-group">
+                    <label for="gear">Gear:</label>
+                    <select id="gear">
+                      <option value="8">8</option>
+                      <option value="16">16</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="bandwidth-buttons">
+                  <button type="button" id="calc-b2p-btn" class="action-btn">
+                    Calculate
+                  </button>
+                  <button type="reset" class="action-btn">Clear</button>
+                </div>
+                <div class="bandwidth-output-group">
+                  <label>Bandwidth (Mbps):</label>
+                  <span id="b2p-bandwidth-output"></span>
+                </div>
+                <div
+                  id="b2p-reminder"
+                  style="
+                    display: none;
+                    margin-top: 1rem;
+                    padding: 0.8rem;
+                    background: #fffbea;
+                    border-left: 4px solid #fcdf50;
+                    border-radius: 4px;
+                    color: #333;
+                    font-size: 0.9em;
+                    line-height: 1.5;
+                    width: fit-content;
+                  "
+                >
+                  <strong>💡 Tip:</strong> Ensure both resulting bandwidth are
+                  equal
+                </div>
+              </form>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <!-- =====================
+      SCRIPTS AND EVENT HANDLERS
+      Add new event listeners or calculation logic in the script below.
+      ===================== -->
+    <script src="app.js"></script>
+    <div
+      id="imgModal"
+      class="img-modal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 50;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <span
+        class="img-modal-close"
+        id="imgModalClose"
+        style="
+          position: absolute;
+          top: 20px;
+          z-index: 51;
+          right: 30px;
+          color: #fff;
+          font-size: 2rem;
+          cursor: pointer;
+        "
+        >&times;</span
+      >
+      <img
+        class="img-modal-content"
+        id="imgModalContent"
+        style="max-width: 90%; max-height: 90%; border-radius: 8px"
+      />
+    </div>
+    <script>
+      // Diagram tooltip interactions and modal open/close
+      (function () {
+        const modal = document.getElementById("imgModal");
+        const modalImg = document.getElementById("imgModalContent");
+        const modalClose = document.getElementById("imgModalClose");
+
+        // Fit image to viewport and center it inside the modal
+        function fitImageToViewport() {
+          try {
+            const padding = 40; // extra padding to keep gaps from edges
+            const maxW = Math.max(window.innerWidth * 0.9 - padding, 100);
+            const maxH = Math.max(window.innerHeight * 0.9 - padding, 100);
+            const natW = modalImg.naturalWidth || modalImg.width || maxW;
+            const natH = modalImg.naturalHeight || modalImg.height || maxH;
+            const scale = Math.min(maxW / natW, maxH / natH, 1);
+            modalImg.style.width = Math.round(natW * scale) + "px";
+            modalImg.style.height = Math.round(natH * scale) + "px";
+            modalImg.style.objectFit = "contain";
+            // move the image a bit up and to the left for better visual placement
+            // negative X -> left, negative Y -> up (percent relative to image size)
+            modalImg.style.transformOrigin = "center center";
+            modalImg.style.transform = "translate(-6%, -60%)";
+          } catch (err) {
+            // fallback: let CSS max-width/max-height handle sizing
+            modalImg.style.width = "";
+            modalImg.style.height = "";
+            modalImg.style.transform = "";
+          }
+        }
+
+        // Open modal with given image src — waits for image load then fits it
+        function openModal(src, alt) {
+          // reset any inline sizing so natural sizes will be available
+          modalImg.style.width = "";
+          modalImg.style.height = "";
+          modalImg.style.objectFit = "contain";
+          modalImg.alt = alt || "";
+
+          // show the overlay first so viewport measurements are accurate
+          modal.style.display = "flex";
+
+          // Ensure we refit after image loads
+          modalImg.onload = function () {
+            fitImageToViewport();
+            // focus close button for accessibility
+            try {
+              modalClose.focus();
+            } catch (e) {}
+          };
+
+          // Set src last to trigger load
+          modalImg.src = src;
+
+          // If the image is cached and already complete, call fit immediately
+          if (modalImg.complete) {
+            fitImageToViewport();
+            try {
+              modalClose.focus();
+            } catch (e) {}
+          }
+        }
+
+        function closeModal() {
+          modal.style.display = "none";
+          // clear src to release memory and reset sizing
+          modalImg.src = "";
+          modalImg.onload = null;
+          modalImg.style.width = "";
+          modalImg.style.height = "";
+          modalImg.style.transform = "";
+        }
+
+        // Re-fit image on window resize while modal is open
+        window.addEventListener("resize", function () {
+          if (
+            modal &&
+            modal.style.display === "flex" &&
+            modalImg &&
+            modalImg.src
+          ) {
+            fitImageToViewport();
+          }
+        });
+
+        // Wire up diagram tooltip(s)
+        document.querySelectorAll(".diagram-tooltip").forEach(function (span) {
+          const content = span.querySelector(".diagram-tooltip-content");
+          if (!content) return;
+          // show tooltip content on hover/focus
+          span.addEventListener("mouseenter", function () {
+            content.style.display = "block";
+            content.style.position = "absolute";
+          });
+          span.addEventListener("mouseleave", function () {
+            content.style.display = "none";
+          });
+          span.addEventListener("focus", function () {
+            content.style.display = "block";
+          });
+          span.addEventListener("blur", function () {
+            content.style.display = "none";
+          });
+
+          // click opens modal with the image inside the tooltip
+          span.addEventListener("click", function (e) {
+            const img = content.querySelector("img");
+            if (img && img.src) openModal(img.src, img.alt);
+            e.stopPropagation();
+          });
+        });
+
+        // Close modal handlers
+        modalClose.addEventListener("click", closeModal);
+        modal.addEventListener("click", function (e) {
+          if (e.target === modal) closeModal();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") closeModal();
+        });
+      })();
+    </script>
+    <!-- Script to handle default page zooming -->
+    <script>
+      // Set the default zoom factor
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.webFrame) {
+          window.webFrame.setZoomFactor(1.0);
+        } else {
+          // Standard browser: use CSS zoom
+          document.body.style.zoom = "100%";
+        }
+      });
+    </script>
+    <!-- Add small JS to toggle tooltip visibility on focus/click for keyboard accessibility -->
+    <script>
+      (function () {
+        document.querySelectorAll(".tooltip").forEach(function (t) {
+          var content = t.querySelector(".tooltip-content");
+          if (!content) return;
+          t.addEventListener("mouseenter", function () {
+            content.style.visibility = "visible";
+          });
+          t.addEventListener("mouseleave", function () {
+            content.style.visibility = "hidden";
+          });
+          t.addEventListener("focus", function () {
+            content.style.visibility = "visible";
+          });
+          t.addEventListener("blur", function () {
+            content.style.visibility = "hidden";
+          });
+          t.addEventListener("click", function (e) {
+            // toggle on click
+            content.style.visibility =
+              content.style.visibility === "visible" ? "hidden" : "visible";
+            e.stopPropagation();
+          });
+        });
+        // hide tooltips when clicking elsewhere
+        document.addEventListener("click", function () {
+          document
+            .querySelectorAll(".tooltip .tooltip-content")
+            .forEach(function (c) {
+              c.style.visibility = "hidden";
+            });
+        });
+      })();
+    </script>
+
+    <!-- Tooltip functionality for P2B and B2P -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const userConfigSection = document.getElementById(
+          "user-config-section"
+        );
+        if (!userConfigSection) return;
+
+        // Tooltip behavior for P2B
+        (function () {
+          const p2bTrigger = userConfigSection.querySelector(".p2b-tooltip");
+          if (!p2bTrigger) return;
+          const p2bOriginalContent = p2bTrigger.querySelector(
+            ".p2b-tooltip-content"
+          );
+          if (!p2bOriginalContent) return;
+          p2bOriginalContent.style.display = "none";
+
+          const modal = document.getElementById("imgModal");
+          const modalImg = document.getElementById("imgModalContent");
+
+          let p2bFloating = null;
+          function removeP2bFloating() {
+            if (p2bFloating) {
+              try {
+                document.body.removeChild(p2bFloating);
+              } catch (e) {}
+              p2bFloating = null;
+            }
+          }
+          function positionP2bFloating() {
+            // Only position if user-config is visible
+            if (userConfigSection.style.display === "none") return;
+            if (!p2bFloating) return;
+            const rect = p2bTrigger.getBoundingClientRect();
+            let left = rect.left + window.scrollX;
+            let top = rect.bottom + window.scrollY + 6;
+            const fw = p2bFloating.offsetWidth;
+            const fh = p2bFloating.offsetHeight;
+            if (left + fw > window.scrollX + window.innerWidth - 8) {
+              left = Math.max(window.scrollX + window.innerWidth - fw - 8, 8);
+            }
+            if (top + fh > window.scrollY + window.innerHeight - 8) {
+              top = rect.top + window.scrollY - fh - 8;
+            }
+            p2bFloating.style.left = left + "px";
+            p2bFloating.style.top = top + "px";
+          }
+          function createP2bFloating() {
+            if (userConfigSection.style.display === "none") return;
+            if (p2bFloating) return;
+            p2bFloating = p2bOriginalContent.cloneNode(true);
+            p2bFloating.style.display = "block";
+            p2bFloating.style.position = "absolute";
+            p2bFloating.style.zIndex = "4000";
+            document.body.appendChild(p2bFloating);
+            positionP2bFloating();
+          }
+          function openP2bModal() {
+            // Reset modal state
+            modalImg.style.width = "";
+            modalImg.style.height = "";
+            modalImg.style.objectFit = "contain";
+            modalImg.alt = "Pixel-to-Byte Parameters";
+
+            // Show modal
+            modal.style.display = "flex";
+
+            // Set up image load handler
+            modalImg.onload = function () {
+              try {
+                const padding = 40;
+                const maxW = Math.max(window.innerWidth * 0.9 - padding, 100);
+                const maxH = Math.max(window.innerHeight * 0.9 - padding, 100);
+                const natW = modalImg.naturalWidth || modalImg.width || maxW;
+                const natH = modalImg.naturalHeight || modalImg.height || maxH;
+                const scale = Math.min(maxW / natW, maxH / natH, 1);
+                modalImg.style.width = Math.round(natW * scale) + "px";
+                modalImg.style.height = Math.round(natH * scale) + "px";
+                modalImg.style.transformOrigin = "center center";
+                modalImg.style.transform = "translate(-6%, -60%)";
+              } catch (err) {
+                modalImg.style.width = "";
+                modalImg.style.height = "";
+                modalImg.style.transform = "";
+              }
+            };
+
+            // Set src last to trigger load
+            modalImg.src = "imgs/p2b.png";
+
+            // If image is cached, call fit immediately
+            if (modalImg.complete) {
+              modalImg.onload();
+            }
+          }
+
+          // Add click event to open modal directly
+          p2bTrigger.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            openP2bModal();
+            removeP2bFloating();
+          });
+
+          p2bTrigger.addEventListener("mouseenter", () => {
+            createP2bFloating();
+          });
+          p2bTrigger.addEventListener("focus", () => {
+            createP2bFloating();
+          });
+          p2bTrigger.addEventListener("mouseleave", () => {
+            removeP2bFloating();
+          });
+          p2bTrigger.addEventListener("blur", () => {
+            removeP2bFloating();
+          });
+          window.addEventListener("scroll", positionP2bFloating, {
+            passive: true,
+          });
+          window.addEventListener("resize", positionP2bFloating);
+        })();
+
+        // Tooltip behavior for B2P
+        (function () {
+          const b2pTrigger = userConfigSection.querySelector(".b2p-tooltip");
+          if (!b2pTrigger) return;
+          const b2pOriginalContent = b2pTrigger.querySelector(
+            ".b2p-tooltip-content"
+          );
+          if (!b2pOriginalContent) return;
+          b2pOriginalContent.style.display = "none";
+
+          const modal = document.getElementById("imgModal");
+          const modalImg = document.getElementById("imgModalContent");
+
+          let b2pFloating = null;
+          function removeB2pFloating() {
+            if (b2pFloating) {
+              try {
+                document.body.removeChild(b2pFloating);
+              } catch (e) {}
+              b2pFloating = null;
+            }
+          }
+          function positionB2pFloating() {
+            // Only position if user-config is visible
+            if (userConfigSection.style.display === "none") return;
+            if (!b2pFloating) return;
+            const rect = b2pTrigger.getBoundingClientRect();
+            let left = rect.left + window.scrollX;
+            let top = rect.bottom + window.scrollY + 6;
+            const fw = b2pFloating.offsetWidth;
+            const fh = b2pFloating.offsetHeight;
+            if (left + fw > window.scrollX + window.innerWidth - 8) {
+              left = Math.max(window.scrollX + window.innerWidth - fw - 8, 8);
+            }
+            if (top + fh > window.scrollY + window.innerHeight - 8) {
+              top = rect.top + window.scrollY - fh - 8;
+            }
+            b2pFloating.style.left = left + "px";
+            b2pFloating.style.top = top + "px";
+          }
+          function createB2pFloating() {
+            if (userConfigSection.style.display === "none") return;
+            if (b2pFloating) return;
+            b2pFloating = b2pOriginalContent.cloneNode(true);
+            b2pFloating.style.display = "block";
+            b2pFloating.style.position = "absolute";
+            b2pFloating.style.zIndex = "4000";
+            document.body.appendChild(b2pFloating);
+            positionB2pFloating();
+          }
+          function openB2pModal() {
+            // Reset modal state
+            modalImg.style.width = "";
+            modalImg.style.height = "";
+            modalImg.style.objectFit = "contain";
+            modalImg.alt = "Byte-to-Pixel Parameters";
+
+            // Show modal
+            modal.style.display = "flex";
+
+            // Set up image load handler
+            modalImg.onload = function () {
+              try {
+                const padding = 40;
+                const maxW = Math.max(window.innerWidth * 0.9 - padding, 100);
+                const maxH = Math.max(window.innerHeight * 0.9 - padding, 100);
+                const natW = modalImg.naturalWidth || modalImg.width || maxW;
+                const natH = modalImg.naturalHeight || modalImg.height || maxH;
+                const scale = Math.min(maxW / natW, maxH / natH, 1);
+                modalImg.style.width = Math.round(natW * scale) + "px";
+                modalImg.style.height = Math.round(natH * scale) + "px";
+                modalImg.style.transformOrigin = "center center";
+                modalImg.style.transform = "translate(-6%, -60%)";
+              } catch (err) {
+                modalImg.style.width = "";
+                modalImg.style.height = "";
+                modalImg.style.transform = "";
+              }
+            };
+
+            // Set src last to trigger load
+            modalImg.src = "imgs/b2p.png";
+
+            // If image is cached, call fit immediately
+            if (modalImg.complete) {
+              modalImg.onload();
+            }
+          }
+
+          // Add click event to open modal directly
+          b2pTrigger.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            openB2pModal();
+            removeB2pFloating();
+          });
+
+          b2pTrigger.addEventListener("mouseenter", () => {
+            createB2pFloating();
+          });
+          b2pTrigger.addEventListener("focus", () => {
+            createB2pFloating();
+          });
+          b2pTrigger.addEventListener("mouseleave", () => {
+            removeB2pFloating();
+          });
+          b2pTrigger.addEventListener("blur", () => {
+            removeB2pFloating();
+          });
+          window.addEventListener("scroll", positionB2pFloating, {
+            passive: true,
+          });
+          window.addEventListener("resize", positionB2pFloating);
+        })();
+      });
+    </script>
+  </body>
+</html>

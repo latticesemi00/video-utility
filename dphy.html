@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>D-PHY Timing Calculator</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="imgs/favicon.ico" />
+    <style>
+      @media (max-width: 900px) {
+        description-box.absolute-left {
+          display: none !important;
+        }
+        .main-content-padded {
+          padding-left: 0 !important;
+        }
+      }
+      .description-box.absolute-left {
+        position: absolute;
+        left: 0;
+        top: 8rem;
+        max-width: 340px;
+        margin: 0;
+        z-index: 1;
+      }
+      .main-content-padded {
+        padding-left: 370px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      /* New styles for flexbox description row */
+      .dphy-description-row {
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 1.2rem;
+      }
+      .dphy-bg-container {
+        background: white;
+        padding: 2rem 0;
+        min-height: calc(100vh - 8rem);
+      }
+      .img-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .img-modal.show {
+        display: flex !important;
+      }
+      .img-modal-content {
+        max-width: 90vw;
+        max-height: 90vh;
+        margin: 0;
+        display: block;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-banner">
+      <div class="banner-content">
+        <div style="display: flex; align-items: center;">
+          <a href="https://www.latticesemi.com/" target="_blank" rel="noopener">
+            <img
+              src="imgs/Lattice Logo Yellow_White.png"
+              alt="Lattice Semiconductor Logo"
+              class="banner-logo"
+            />
+          </a>
+          <nav class="top-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="config.html" class="nav-link">MIPI Configuration</a>
+            <a href="dphy.html" class="nav-link">D-PHY Timing Parameters</a>
+            <a href="video_timing.html" class="nav-link">Video Timing</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <div class="dphy-bg-container">
+      <main>
+        <!-- Top description row as flexbox, matching video_timing.html -->
+        <div
+          class="dphy-description-row"
+          style="
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+            margin-top: -1.5rem;
+          "
+        >
+          <!-- Description column -->
+          <div
+            class="description-box"
+            style="
+              max-width: 380px;
+              min-width: 260px;
+              margin-top: 2rem;
+              background: rgba(255, 255, 255, 0.05);
+              padding: 1.5rem;
+              border-radius: 8px;
+              border: 1px solid rgba(255, 255, 255, 0.1);
+            "
+          >
+            <h2 style="display:flex; align-items:center; gap:0.6rem;">
+              D-PHY Timing Parameters Calculator
+              <span
+                class="diagram-tooltip"
+                tabindex="0"
+                aria-label="Open RX Timing Diagram"
+                style="display:inline-block; color:#fcdf50; font-weight:bold; cursor:pointer; position:relative;"
+              >
+                ⓘ
+                <div
+                  class="diagram-tooltip-content"
+                  style="display:none; position:absolute; left:0; z-index:1200; background:#fefbe8; color:#000; padding:0.6rem; border-radius:6px; border:1px solid rgba(0,0,0,0.08); width:320px;"
+                >
+                  <div style="font-weight:bold; margin-bottom:0.4rem;">RX Timing Diagram</div>
+                  <img
+                    src="imgs/rxtiming_lightmode.svg"
+                    alt="RX Timing Diagram preview"
+                    style="width:100%; height:auto; display:block; cursor:zoom-in; border-radius:4px;"
+                  />
+                </div>
+              </span>
+            </h2>
+            <p style="font-weight: normal">
+              Lattice Radiant automatically calculates protocol timing parameters based on the defined Line Rate, but users also have the flexibility to customize these settings. This tool helps calculate alternative MIPI D-PHY timing parameter values that fully comply with the MIPI D-PHY specification for the following IP cores in Radiant:
+            </p>
+            <div style="margin-top: 1rem; font-weight: normal">
+              <a
+                href="https://www.latticesemi.com/Products/DesignSoftwareAndIP/IntellectualProperty/IPCore/IPCores04/CSI2DSIDPHYTransmitter"
+                target="_blank"
+                rel="noopener"
+                style="color: #50affc; text-decoration: underline"
+                >Lattice MIPI D-PHY TX</a
+              >
+              <br /><br />
+              <a
+                href="https://www.latticesemi.com/Products/DesignSoftwareAndIP/IntellectualProperty/IPCore/IPCores04/CSI2DSIDPHYReceiver"
+                target="_blank"
+                rel="noopener"
+                style="color: #50affc; text-decoration: underline"
+                >Lattice MIPI D-PHY RX</a
+              >
+              <br /><br />
+              
+            </div>
+            <strong>Note that the actual timing parameter is equal to Byte Clock Period (ps) multiply with the calculated attribute value shown in the table below.  Only Soft D-PHY (Soft CIL) with Gear 8 configuration is supported for now. </strong> <br />
+          </div>
+          <!-- Instructions column -->
+          <div
+            class="description-box"
+            style="
+              max-width: 380px;
+              min-width: 260px;
+              margin-top: 2rem;
+              background: rgba(255, 255, 255, 0.05);
+              padding: 1.5rem;
+              border-radius: 8px;
+              border: 1px solid rgba(255, 255, 255, 0.1);
+            "
+          >
+
+            <h2>Instructions</h2>
+            <ol style="font-weight: normal; padding-left: 1.2rem">
+              <li>
+                Insert desired Line Rate into the field.
+              </li>
+              <li>
+                Press "Calculate" to show the calculated values for TX and RX timing parameters.
+              </li>
+              <li>
+                Choose a value between Min and Max for each parameter for your own design. You may export the JSON file as necessary.
+              </li>
+            </ol>
+            <h2>Customizing TX Soft D-PHY Protocol Timing Parameters:</h2>
+            <ol
+              style="
+                font-weight: normal;
+                padding-left: 1.2rem;
+                margin-top: 0rem;
+              "
+            >
+              <li>
+                In Lattice Radiant, open the "Module/IP Block Wizard" for the CSI-2/DSI D-PHY TX IP.
+              </li>
+              <li>Navigate to the "Protocol Timing Parameter tab".</li>
+              <li>Select the "Customize TX Timing Parameter Values" option.</li>
+              <li>
+                Modify the parameters according to the values provided by this tool. Use values within Min-Max. Recommended to use values close to Min. 
+              </li>
+              <li>Click the "Generate" button to save your changes.</li>
+            </ol>
+
+            <h2>Customizing RX Soft D-PHY Protocol Timing Parameters:</h2>
+            <ol
+              style="
+                font-weight: normal;
+                padding-left: 1.2rem;
+                margin-top: 0rem;
+              "
+            >
+              <li>
+                In Lattice Radiant, open the "Module/IP Block Wizard" for the CSI-2/DSI D-PHY RX IP.
+              </li>
+              <li>Under Timing Parameter section, enable “Customize CIL Data Settle” check box.</li>
+              <li>Modify the parameters according to the values provided by this tool. Use values within Min-Max. Recommended to use values close to Min. </li>
+            </ol>
+
+          </div>
+        </div>
+        <!-- Main content row as flexbox -->
+        <div class="main-content-padded">
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              width: fit-content;
+              margin-left: 0;
+              margin-top: 0;
+            "
+          >
+            <div
+              class="container center-fields"
+              style="min-width: 840px; position: relative; align-self: center"
+            >
+              <form id="dphy-form" autocomplete="off">
+                <div class="field-group">
+                  <label for="bit-rate">Line Rate (Mbps):</label>
+                  <input
+                    type="number"
+                    id="bit-rate"
+                    min="80"
+                    max="1800"
+                    step="1"
+                    placeholder="80-1800"
+                    required
+                  />
+                </div>
+                <div
+                  class="button-row"
+                  style="margin-top: 1.2rem; display: flex; gap: 1.2rem"
+                >
+                  <button
+                    type="reset"
+                    class="action-btn"
+                    style="min-width: 120px"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    type="button"
+                    id="calc-dphy-btn"
+                    class="action-btn"
+                    style="min-width: 120px"
+                  >
+                    Calculate
+                  </button>
+                </div>
+                <!-- Output section for UI(ps) and Byte Clock Period -->
+                <div
+                  id="dphy-extra-outputs"
+                  style="
+                    margin-top: 1.2rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    align-items: flex-start;
+                    color: #ffffff;
+                  "
+                >
+                  <div>
+                    <strong>UI (ps):</strong> <span id="out-ui-ps"></span>
+                  </div>
+                  <div>
+                    <strong>D-PHY Clock Frequency (MHz):</strong>
+                    <span id="dphy-clock"></span>
+                  </div>
+                  <div>
+                    <strong>Byte Clock Period (ps):</strong>
+                    <span id="out-byte-clock-period"></span>
+                  </div>
+                  <div>
+                    <strong>D-PHY Clock Period (ns):</strong>
+                    <span id="out-clock-per-min"></span>
+                  </div>
+                  <div>
+                    <strong>Byte Clock Frequency (MHz):</strong>
+                    <span id="out-byte-freq-min"></span>
+                  </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="button-row" style="margin: 1.2rem auto 0; display: flex; gap: 1.2rem; justify-content: center; max-width: 900px;">
+                <button type="button" id="export-json-btn" class="action-btn" style="min-width: 140px">
+                  Export JSON
+                </button>
+              </div>
+              <div
+                class="description-box"
+              style="max-width: 900px; margin: 0 auto; margin-top: 2rem"
+            >
+              <div class="desc-title" style="margin-top: 3rem">
+                TX Timing Outputs
+              </div>
+              <table
+                class="table-border"
+                id="dphy-output-table"
+                style="width: 100%; margin-top: 1.2rem"
+              >
+                <thead>
+                  <tr style="font-weight: bold">
+                    <td>Parameter</td>
+                    <td>Min</td>
+                    <td>Max</td>
+                    <td>IP Default</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>t_LPX</td>
+                    <td id="out-lpx-min"></td>
+                    <td id="out-lpx-max"></td>
+                    <td id="out-lpx-choice"></td>
+                  </tr>
+                  <tr>
+                    <td>t_HS-PREPARE</td>
+                    <td id="out-hs-prepare-min"></td>
+                    <td id="out-hs-prepare-max"></td>
+                    <td id="out-hs-prepare-choice"></td>
+                  </tr>
+                  <tr>
+                    <td>t_HS_ZERO</td>
+                    <td id="out-tclk-hszero-min"></td>
+                    <td id="out-tclk-hszero-max"></td>
+                    <td id="out-tclk-hszero-choice"></td>
+                  </tr>
+                  <tr>
+                    <td>t_HS_TRAIL</td>
+                    <td id="out-hs-trail-min"></td>
+                    <td id="out-hs-trail-max"></td>
+                    <td id="out-hs-trail-choice"></td>
+                  </tr>
+                  <tr>
+                    <td>t_HS_EXIT</td>
+                    <td id="out-hs-exit-min"></td>
+                    <td id="out-hs-exit-max"></td>
+                    <td id="out-hs-exit-choice"></td>
+                  </tr>
+                  <tr>
+                    <td>t_CLK-Prepare</td>
+                    <td id="out-clk-prepare-min"></td>
+                    <td id="out-clk-prepare-max"></td>
+                    <td id="out-clk-prepare-choice"></td>
+                  </tr>
+                  <tr>
+                    <td>t_CLK-ZERO</td>
+                    <td id="out-clk-zero-min"></td>
+                    <td id="out-clk-zero-max"></td>
+                    <td id="out-clk-zero-choice"></td>
+                  </tr>
+                  <tr>
+                    <td>t_CLK-PRE</td>
+                    <td id="out-clk-pre-min"></td>
+                    <td id="out-clk-pre-max"></td>
+                    <td id="out-clk-pre-choice"></td>
+                  </tr>
+                  <tr>
+                    <td>t_CLK-POST</td>
+                    <td id="out-clk-post-min"></td>
+                    <td id="out-clk-post-max"></td>
+                    <td id="out-clk-post-choice"></td>
+                  </tr>
+                  <tr>
+                    <td>t_CLK-TRAIL</td>
+                    <td id="out-clk-trail-min"></td>
+                    <td id="out-clk-trail-max"></td>
+                    <td id="out-clk-trail-choice"></td>
+                  </tr>
+                  <tr>
+                    <td>t_CLK-EXIT</td>
+                    <td id="out-clk-exit-min"></td>
+                    <td id="out-clk-exit-max"></td>
+                    <td id="out-clk-exit-choice"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- UG: Where to put the values of TX Timing Outputs in Radiant?-->
+              <div style="margin-top: 1rem; text-align: center;">
+                <span style="color: #666666; font-size: 0.9em; font-weight: normal; font-style: italic; display: none;" id="tx-radiant-params-text">
+                  Where should I put these parameters in Radiant?
+                </span>
+                <span
+                  class="tx-radiant-tooltip"
+                  tabindex="0"
+                  aria-label="Preview TX D-PHY Radiant parameters"
+                  style="color: #fcdf50; font-weight: bold; cursor: pointer; position: relative; margin-left: 0.3rem; display: none;"
+                  id="tx-radiant-tooltip-icon"
+                >
+                  ⓘ
+                  <div
+                    class="tx-radiant-tooltip-content"
+                    style="display: none; position: absolute; left: 0; z-index: 1200; background: #fefbe8; color: #000; padding: 0.6rem; border-radius: 6px; border: 1px solid rgba(0,0,0,0.08); width: 320px;"
+                  >
+                    <div style="font-weight: bold; margin-bottom: 0.4rem;">Configure TX Timing Parameters in Radiant</div>
+                    <img
+                      src="imgs/tx_dphy2.png"
+                      alt="TX D-PHY Parameters in Radiant"
+                      style="width: 100%; height: auto; display: block; cursor: zoom-in; border-radius: 4px;"
+                    />
+                  </div>
+                </span>
+              </div>
+              <!-- New Data_Settle Table -->
+              <div
+                class="desc-title"
+                style="margin-top: 2.5rem; max-width: 900px"
+              >
+                RX Timing Output
+              </div>
+              <table
+                class="table-border"
+                id="dphy-rx-output-table"
+                style="width: 100%; margin-top: 1.2rem; margin-bottom: 2rem"
+              >
+                <thead>
+                  <tr style="font-weight: bold">
+                    <td>Parameter</td>
+                    <td>Min</td>
+                    <td>Max</td>
+                    <td>IP Default</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Data_Settle</td>
+                    <td id="out-data-settle-min"></td>
+                    <td id="out-data-settle-max"></td>
+                    <td id="out-data-settle-choice"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- UG: Where to put the values of RX Timing Outputs in Radiant?-->
+              <div style="margin-top: 1rem; text-align: center;">
+                <span style="color: #666666; font-size: 0.9em; font-weight: normal; font-style: italic; display: none;" id="rx-radiant-params-text">
+                  Where should I put these parameters in Radiant?
+                </span>
+                <span
+                  class="rx-radiant-tooltip"
+                  tabindex="0"
+                  aria-label="Preview RX D-PHY Radiant parameters"
+                  style="color: #fcdf50; font-weight: bold; cursor: pointer; position: relative; margin-left: 0.3rem; display: none;"
+                  id="rx-radiant-tooltip-icon"
+                >
+                  ⓘ
+                  <div
+                    class="rx-radiant-tooltip-content"
+                    style="display: none; position: absolute; left: 0; z-index: 1200; background: #fefbe8; color: #000; padding: 0.6rem; border-radius: 6px; border: 1px solid rgba(0,0,0,0.08); width: 320px;"
+                  >
+                    <div style="font-weight: bold; margin-bottom: 0.4rem;">Configure RX Timing Parameters in Radiant</div>
+                    <img
+                      src="imgs/rx_dphy2.png"
+                      alt="RX D-PHY Parameters in Radiant"
+                      style="width: 100%; height: auto; display: block; cursor: zoom-in; border-radius: 4px;"
+                    />
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Added Export JSON button at the bottom of the page -->
+        
+      </main>
+      <script src="dphy.js"></script>
+      <script src="video_timing.js"></script>
+      <div id="imgModal" class="img-modal" style="display: none">
+        <span
+          class="img-modal-close"
+          id="imgModalClose"
+          style="
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            font-size: 40px;
+            color: #fff;
+            cursor: pointer;
+            z-index: 11;
+          "
+          >&times;</span
+        >
+        <img
+          class="img-modal-content"
+          id="imgModalContent"
+          style="
+            max-width: 90vw;
+            max-height: 90vh;
+            margin: 0;
+            display: block;
+            border-radius: 8px;
+          "
+        />
+      </div>
+        <!-- Move all tooltip scripts to the end, after DOM is loaded -->
+        <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+          // Enhanced Modal close functionality
+          const modalClose = document.getElementById("imgModalClose");
+          const modal = document.getElementById("imgModal");
+          
+          // Function to completely close modal
+          function closeModal(e) {
+            if (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+            }
+            
+            // Remove show class first
+            modal.classList.remove("show");
+            
+            // Use setTimeout to ensure CSS transition completes
+            setTimeout(() => {
+              modal.style.display = 'none';
+            }, 50);
+            
+            // Clear any floating tooltips
+            const existingFloating = document.querySelectorAll('[style*="position:absolute"][style*="z-index:4000"]');
+            existingFloating.forEach(el => {
+              try { document.body.removeChild(el); } catch(e) {}
+            });
+          }
+          
+          // Simplified close button handler
+          if (modalClose) {
+            modalClose.onclick = function(e) {
+              e.stopPropagation();
+              closeModal(e);
+              return false;
+            };
+          }
+          
+          // Close modal when clicking on background
+          if (modal) {
+            modal.onclick = function(e) {
+              if (e.target === modal) {
+                closeModal(e);
+              }
+            };
+          }
+        
+          // ESC key handler
+          document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && (modal.style.display === 'flex' || modal.classList.contains('show'))) {
+              closeModal(e);
+            }
+          });
+        
+          // Single calcBtn event listener for both RX tooltip and Radiant link
+        const calcBtn = document.getElementById('calc-dphy-btn');
+        if (calcBtn) {
+          calcBtn.addEventListener('click', function() {
+            // Show the Radiant parameters text and links after calculation
+            const radiantText = document.getElementById('radiant-params-text');
+            const radiantLinks = document.getElementById('radiant-params-links');
+            if (radiantText) {
+              radiantText.style.display = 'inline';
+            }
+            if (radiantLinks) {
+              radiantLinks.style.display = 'block';
+            }
+
+            // Show the TX Radiant parameters text and tooltip after calculation
+            const txRadiantText = document.getElementById('tx-radiant-params-text');
+            const txRadiantTooltip = document.getElementById('tx-radiant-tooltip-icon');
+            if (txRadiantText) {
+              txRadiantText.style.display = 'inline';
+            }
+            if (txRadiantTooltip) {
+              txRadiantTooltip.style.display = 'inline';
+            }
+
+            // Show the RX Radiant parameters text and tooltip after calculation
+            const rxRadiantText = document.getElementById('rx-radiant-params-text');
+            const rxRadiantTooltip = document.getElementById('rx-radiant-tooltip-icon');
+            if (rxRadiantText) {
+              rxRadiantText.style.display = 'inline';
+            }
+            if (rxRadiantTooltip) {
+              rxRadiantTooltip.style.display = 'inline';
+            }
+          });
+        }
+
+        // Add tooltip behavior for TX D-PHY main
+        (function() {
+          const txDphyMainTrigger = document.querySelector('.tx-dphy-main-tooltip');
+          if(!txDphyMainTrigger) return;
+          const txDphyMainOriginalContent = txDphyMainTrigger.querySelector('.tx-dphy-main-tooltip-content');
+          if(!txDphyMainOriginalContent) return;
+          txDphyMainOriginalContent.style.display = 'none';
+
+          const modal = document.getElementById('imgModal');
+          const modalImg = document.getElementById('imgModalContent');
+
+          let txDphyMainFloating = null;
+          function removeTxDphyMainFloating(){ if(txDphyMainFloating){ try{ document.body.removeChild(txDphyMainFloating); }catch(e){} txDphyMainFloating=null; } }
+          function positionTxDphyMainFloating(){ 
+            if(!txDphyMainFloating) return; 
+            const rect = txDphyMainTrigger.getBoundingClientRect(); 
+            let left = rect.left + window.scrollX; 
+            let top = rect.bottom + window.scrollY + 6; 
+            const fw = txDphyMainFloating.offsetWidth; 
+            const fh = txDphyMainFloating.offsetHeight; 
+            if(left+fw > window.scrollX + window.innerWidth - 8){ 
+              left = Math.max(window.scrollX + window.innerWidth - fw - 8,8);
+            } 
+            if(top+fh > window.scrollY + window.innerHeight - 8){ 
+              top = rect.top + window.scrollY - fh - 8; 
+            } 
+            txDphyMainFloating.style.left = left + 'px'; 
+            txDphyMainFloating.style.top = top + 'px'; 
+          }
+          function createTxDphyMainFloating(){ 
+            if(txDphyMainFloating) return; 
+            txDphyMainFloating = txDphyMainOriginalContent.cloneNode(true); 
+            txDphyMainFloating.style.display='block'; 
+            txDphyMainFloating.style.position='absolute'; 
+            txDphyMainFloating.style.zIndex='4000'; 
+            document.body.appendChild(txDphyMainFloating); 
+            positionTxDphyMainFloating(); 
+          }
+          function openTxDphyMainModal(){ 
+            // Ensure modal is completely reset before opening
+            modal.classList.remove("show");
+            modal.style.display = 'none';
+            modalImg.alt = 'TX D-PHY Main Diagram'; 
+            modalImg.src = 'imgs/tx_dphy_main.png';
+            // Use setTimeout to ensure the reset completes before showing
+            setTimeout(() => {
+              modal.classList.add('show'); 
+              modal.style.display = 'flex';
+            }, 10);
+          }
+
+          // Add click event to open modal directly
+          txDphyMainTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            openTxDphyMainModal();
+            removeTxDphyMainFloating();
+          });
+
+          txDphyMainTrigger.addEventListener('mouseenter', () => { createTxDphyMainFloating(); });
+          txDphyMainTrigger.addEventListener('focus', () => { createTxDphyMainFloating(); });
+          txDphyMainTrigger.addEventListener('mouseleave', () => { removeTxDphyMainFloating(); });
+          txDphyMainTrigger.addEventListener('blur', () => { removeTxDphyMainFloating(); });
+          window.addEventListener('scroll', positionTxDphyMainFloating, { passive:true });
+          window.addEventListener('resize', positionTxDphyMainFloating);
+        })();
+
+        // Add tooltip behavior for RX D-PHY main
+        (function() {
+          const rxDphyMainTrigger = document.querySelector('.rx-dphy-main-tooltip');
+          if(!rxDphyMainTrigger) return;
+          const rxDphyMainOriginalContent = rxDphyMainTrigger.querySelector('.rx-dphy-main-tooltip-content');
+          if(!rxDphyMainOriginalContent) return;
+          rxDphyMainOriginalContent.style.display = 'none';
+
+          const modal = document.getElementById('imgModal');
+          const modalImg = document.getElementById('imgModalContent');
+
+          let rxDphyMainFloating = null;
+          function removeRxDphyMainFloating(){ if(rxDphyMainFloating){ try{ document.body.removeChild(rxDphyMainFloating); }catch(e){} rxDphyMainFloating=null; } }
+          function positionRxDphyMainFloating(){ 
+            if(!rxDphyMainFloating) return; 
+            const rect = rxDphyMainTrigger.getBoundingClientRect(); 
+            let left = rect.left + window.scrollX; 
+            let top = rect.bottom + window.scrollY + 6; 
+            const fw = rxDphyMainFloating.offsetWidth; 
+            const fh = rxDphyMainFloating.offsetHeight; 
+            if(left+fw > window.scrollX + window.innerWidth - 8){ 
+              left = Math.max(window.scrollX + window.innerWidth - fw - 8,8);
+            } 
+            if(top+fh > window.scrollY + window.innerHeight - 8){ 
+              top = rect.top + window.scrollY - fh - 8; 
+            } 
+            rxDphyMainFloating.style.left = left + 'px'; 
+            rxDphyMainFloating.style.top = top + 'px'; 
+          }
+          function createRxDphyMainFloating(){ 
+            if(rxDphyMainFloating) return; 
+            rxDphyMainFloating = rxDphyMainOriginalContent.cloneNode(true); 
+            rxDphyMainFloating.style.display='block'; 
+            rxDphyMainFloating.style.position='absolute'; 
+            rxDphyMainFloating.style.zIndex='4000'; 
+            document.body.appendChild(rxDphyMainFloating); 
+            positionRxDphyMainFloating(); 
+          }
+          function openRxDphyMainModal(){ 
+            // Ensure modal is completely reset before opening
+            modal.classList.remove("show");
+            modal.style.display = 'none';
+            modalImg.alt = 'RX D-PHY Main Diagram'; 
+            modalImg.src = 'imgs/rx_dphy_main.png';
+            // Use setTimeout to ensure the reset completes before showing
+            setTimeout(() => {
+              modal.classList.add('show'); 
+              modal.style.display = 'flex';
+            }, 10);
+          }
+
+          // Add click event to open modal directly
+          rxDphyMainTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            openRxDphyMainModal();
+            removeRxDphyMainFloating();
+          });
+
+          rxDphyMainTrigger.addEventListener('mouseenter', () => { createRxDphyMainFloating(); });
+          rxDphyMainTrigger.addEventListener('focus', () => { createRxDphyMainFloating(); });
+          rxDphyMainTrigger.addEventListener('mouseleave', () => { removeRxDphyMainFloating(); });
+          rxDphyMainTrigger.addEventListener('blur', () => { removeRxDphyMainFloating(); });
+          window.addEventListener('scroll', positionRxDphyMainFloating, { passive:true });
+          window.addEventListener('resize', positionRxDphyMainFloating);
+        })();
+
+        // Add tooltip behavior for TX Radiant parameters
+        (function() {
+          const txRadiantTrigger = document.querySelector('.tx-radiant-tooltip');
+          if(!txRadiantTrigger) return;
+          const txRadiantOriginalContent = txRadiantTrigger.querySelector('.tx-radiant-tooltip-content');
+          if(!txRadiantOriginalContent) return;
+          txRadiantOriginalContent.style.display = 'none';
+
+          const modal = document.getElementById('imgModal');
+          const modalImg = document.getElementById('imgModalContent');
+
+          let txRadiantFloating = null;
+          function removeTxRadiantFloating(){ if(txRadiantFloating){ try{ document.body.removeChild(txRadiantFloating); }catch(e){} txRadiantFloating=null; } }
+          function positionTxRadiantFloating(){ 
+            if(!txRadiantFloating) return; 
+            const rect = txRadiantTrigger.getBoundingClientRect(); 
+            let left = rect.left + window.scrollX; 
+            let top = rect.bottom + window.scrollY + 6; 
+            const fw = txRadiantFloating.offsetWidth; 
+            const fh = txRadiantFloating.offsetHeight; 
+            if(left+fw > window.scrollX + window.innerWidth - 8){ 
+              left = Math.max(window.scrollX + window.innerWidth - fw - 8,8);
+            } 
+            if(top+fh > window.scrollY + window.innerHeight - 8){ 
+              top = rect.top + window.scrollY - fh - 8; 
+            } 
+            txRadiantFloating.style.left = left + 'px'; 
+            txRadiantFloating.style.top = top + 'px'; 
+          }
+          function createTxRadiantFloating(){ 
+            if(txRadiantFloating) return; 
+            txRadiantFloating = txRadiantOriginalContent.cloneNode(true); 
+            txRadiantFloating.style.display='block'; 
+            txRadiantFloating.style.position='absolute'; 
+            txRadiantFloating.style.zIndex='4000'; 
+            document.body.appendChild(txRadiantFloating); 
+            positionTxRadiantFloating(); 
+          }
+          function openTxRadiantModal(){ 
+            // Ensure modal is completely reset before opening
+            modal.classList.remove("show");
+            modal.style.display = 'none';
+            modalImg.alt = 'TX D-PHY Parameters in Radiant'; 
+            modalImg.src = 'imgs/tx_dphy2.png';
+            // Use setTimeout to ensure the reset completes before showing
+            setTimeout(() => {
+              modal.classList.add('show'); 
+              modal.style.display = 'flex';
+            }, 10);
+          }
+
+          // Add click event to open modal directly
+          txRadiantTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            openTxRadiantModal();
+            removeTxRadiantFloating();
+          });
+
+          txRadiantTrigger.addEventListener('mouseenter', () => { createTxRadiantFloating(); });
+          txRadiantTrigger.addEventListener('focus', () => { createTxRadiantFloating(); });
+          txRadiantTrigger.addEventListener('mouseleave', () => { removeTxRadiantFloating(); });
+          txRadiantTrigger.addEventListener('blur', () => { removeTxRadiantFloating(); });
+          window.addEventListener('scroll', positionTxRadiantFloating, { passive:true });
+          window.addEventListener('resize', positionTxRadiantFloating);
+        })();
+
+        // Add tooltip behavior for RX Radiant parameters
+        (function() {
+          const rxRadiantTrigger = document.querySelector('.rx-radiant-tooltip');
+          if(!rxRadiantTrigger) return;
+          const rxRadiantOriginalContent = rxRadiantTrigger.querySelector('.rx-radiant-tooltip-content');
+          if(!rxRadiantOriginalContent) return;
+          rxRadiantOriginalContent.style.display = 'none';
+
+          const modal = document.getElementById('imgModal');
+          const modalImg = document.getElementById('imgModalContent');
+
+          let rxRadiantFloating = null;
+          function removeRxRadiantFloating(){ if(rxRadiantFloating){ try{ document.body.removeChild(rxRadiantFloating); }catch(e){} rxRadiantFloating=null; } }
+          function positionRxRadiantFloating(){ 
+            if(!rxRadiantFloating) return; 
+            const rect = rxRadiantTrigger.getBoundingClientRect(); 
+            let left = rect.left + window.scrollX; 
+            let top = rect.bottom + window.scrollY + 6; 
+            const fw = rxRadiantFloating.offsetWidth; 
+            const fh = rxRadiantFloating.offsetHeight; 
+            if(left+fw > window.scrollX + window.innerWidth - 8){ 
+              left = Math.max(window.scrollX + window.innerWidth - fw - 8,8);
+            } 
+            if(top+fh > window.scrollY + window.innerHeight - 8){ 
+              top = rect.top + window.scrollY - fh - 8; 
+            } 
+            rxRadiantFloating.style.left = left + 'px'; 
+            rxRadiantFloating.style.top = top + 'px'; 
+          }
+          function createRxRadiantFloating(){ 
+            if(rxRadiantFloating) return; 
+            rxRadiantFloating = rxRadiantOriginalContent.cloneNode(true); 
+            rxRadiantFloating.style.display='block'; 
+            rxRadiantFloating.style.position='absolute'; 
+            rxRadiantFloating.style.zIndex='4000'; 
+            document.body.appendChild(rxRadiantFloating); 
+            positionRxRadiantFloating(); 
+          }
+          function openRxRadiantModal(){ 
+            // Ensure modal is completely reset before opening
+            modal.classList.remove("show");
+            modal.style.display = 'none';
+            modalImg.alt = 'RX D-PHY Parameters in Radiant'; 
+            modalImg.src = 'imgs/rx_dphy2.png';
+            // Use setTimeout to ensure the reset completes before showing
+            setTimeout(() => {
+              modal.classList.add('show'); 
+              modal.style.display = 'flex';
+            }, 10);
+          }
+
+          // Add click event to open modal directly
+          rxRadiantTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            openRxRadiantModal();
+            removeRxRadiantFloating();
+          });
+
+          rxRadiantTrigger.addEventListener('mouseenter', () => { createRxRadiantFloating(); });
+          rxRadiantTrigger.addEventListener('focus', () => { createRxRadiantFloating(); });
+          rxRadiantTrigger.addEventListener('mouseleave', () => { removeRxRadiantFloating(); });
+          rxRadiantTrigger.addEventListener('blur', () => { removeRxRadiantFloating(); });
+          window.addEventListener('scroll', positionRxRadiantFloating, { passive:true });
+          window.addEventListener('resize', positionRxRadiantFloating);
+        })();
+
+        
+        
+          // Diagram tooltip handler is in dphy.js to avoid duplication
+        });
+        </script>
+    </div>
+  </body>
+</html>
