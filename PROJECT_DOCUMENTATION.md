@@ -104,7 +104,7 @@ Key images in `imgs/`:
 
 ## Support
 
-- Contacts: Rachel Ng Ai Ling, Hafiz Zaharudin.
+- Contacts: Rachel Ng Ai Ling(rnailing2004@gmail.com), Hafiz Zaharudin(mhafiz.1ak@gmail.com).
 - Repositories: internal Gitea (`hafiz.zaharudin/video-utility`) and public GitHub (`hfz-zhrdn/video-utility`).
 
 ## Change Log
