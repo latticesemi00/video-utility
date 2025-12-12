@@ -45,6 +45,48 @@ git commit -m "Add short description of change"
 git push origin master
 ```
 
+## Linking Gitea to GitHub repository
+
+### Auto-mirroring Gitea to GitHub
+
+To set up _automatic_ mirroring from a source Gitea repository to a GitHub repository (so that every push made to Gitea is automatically synced to GitHub):
+
+#### 1. **Create an empty repository on GitHub**
+
+- Go to [https://github.com/new](https://github.com/new) and create a repository (do **not** initialize with README or .gitignore).
+
+#### 2. **Get your GitHub repository URL**
+
+- Example: `https://github.com/<your-username>/<repo-name>.git`
+
+#### 3. **Set up a Push Mirror on Gitea**
+
+- Go to your Gitea repo in the browser.
+- Click on **Settings** > **Mirroring** in the left sidebar.
+- Under **Push Mirror**, enter the GitHub HTTPS clone URL.
+- Use your GitHub username and a [GitHub personal access token (PAT)](https://github.com/settings/tokens) as the password. (The PAT must include `repo` scope.)
+- Click **Add Push Mirror**.
+
+#### 4. **Mirror settings**
+
+- Gitea will now automatically mirror every push to GitHub.
+
+#### 5. **Test the mirroring**
+
+- Push a change to Gitea (`git push origin master`).
+- After a minute, check your GitHub repo for the update.
+
+#### 6. **Tips & Notes**
+
+- If mirroring fails, check the mirror status in Gitea’s "Mirroring" tab for errors (e.g., incorrect credentials).
+- Use HTTPS for the mirror URL, not SSH.
+- Make sure you are the Admin for the repository in Gitea to allow mirroring.
+
+**References:**
+
+- [Gitea Docs: Repository Mirroring](https://docs.gitea.com/usage/repository-mirroring)
+- [GitHub Docs: Creating a personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
+
 ## Development Flow
 
 1. Identify the page to change (`config.html`, `video_timing.html`, `dphy.html`, or `index.html`).
