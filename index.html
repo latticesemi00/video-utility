@@ -23,7 +23,7 @@
           <nav class="top-nav">
             <a href="index.html" class="nav-link">Home</a>
             <a href="config.html" class="nav-link">MIPI Configuration</a>
-            <a href="dphy.html" class="nav-link">Soft D-PHY Parameter</a>
+            <a href="dphy.html" class="nav-link">D-PHY Timing Parameters</a>
             <a href="video_timing.html" class="nav-link">Video Timing</a>
           </nav>
         </div>
@@ -46,162 +46,53 @@
           These tools are optimized for Lattice FPGA devices, helping designers streamline workflows and ensure correct IP configuration.
         </p>
         <p>
-          <strong>Purpose:</strong> Provide comprehensive video timing
-          calculations (active area, blanking intervals, pixel clock, frame
-          rates) and MIPI D-PHY parameter optimization for Lattice FPGA/SoC
-          designs. Support both industry-standard presets (CTA/CEA, VESA) and
-          custom configurations with real-time validation and export
-          capabilities.
+          <strong>Target audience:</strong> All users working with Lattice’s MIPI D-PHY Foundational IP, including MIPI CSI-2/DSI D-PHY TX and RX IP, Pixel-to-Byte Converter and Byte-to-Pixel Converter IP, as well as Lattice’s Image Signal Processing IP Core.
         </p>
-        <p>
-          <strong>Target audience:</strong> FPGA/SoC designers, display
-          interface engineers, firmware developers, applications engineers, and
-          validation/test teams working with MIPI DSI/CSI and video pipelines.
-          Specifically designed for Lattice CrossLink-NX, Avant,
-          CertusPro-NX/MachXO5, and Certus-NX device families.
-        </p>
-        <p><strong>Typical use cases:</strong></p>
-        <ul>
-          <li>Sizing horizontal/vertical blanking for timing closure</li>
-          <li>Estimating MIPI lane rates and bandwidth requirements</li>
+
+        <p><strong>How to use:</strong></p>
+        <ol>
+          <p>The Lattice Video Utility Calculator contains three main sections: </p>
           <li>
-            Validating sensor/display configurations against device capabilities
+            <strong>MIPI Configuration</strong> 
           </li>
           <li>
-            Calculating D-PHY timing parameters for soft D-PHY implementations
+            <strong>D-PHY Timing Parameters </strong>
           </li>
-          <li>Sharing standardized configurations across design teams</li>
-          <li>Converting between pixel and byte clock domains</li>
-          <li>Optimizing video pipeline performance for Lattice devices</li>
-        </ul>
-        <p>
-          <strong>Who should use this:</strong> Teams building camera/display
-          interfaces, prototyping embedded vision systems, or validating
-          board-level video paths on Lattice devices.
-        </p>
+          <li>
+            <strong>Video Timing</strong>
+          </li>
+          <p>
+            Each section serves a distinct purpose and can be used independently for specific use cases. For detailed information, refer to the “What it Covers” section below and the guidelines provided within each calculator section.
+          </p>
+        </ol>
+
         <p><strong>What it covers:</strong></p>
         <ul>
           <li>
-            <strong>Video Timing Calculator:</strong> Total/active pixels,
-            horizontal/vertical blanking, frame rates, pixel clock calculations
-            with CTA/CEA and VESA presets
+            <strong>MIPI Configuration (User Configuration):</strong> Provides calculations for Bits per Clock, D-PHY Clock, Pixel Clock, and Byte Clock. These values are derived based on the MIPI IP configuration, selected device—CrossLink-NX, Avant, CertusPro-NX/MachXO5, and Certus-NX—with variations depending on package type and speed grade. 
           </li>
           <li>
-            <strong>MIPI Configuration:</strong> Lane count optimization, line
-            rate validation, D-PHY clock calculations, and device-specific
-            parameter ranges
+            <strong>MIPI Configuration (Pixel-Byte Frequency Calculator):</strong> Compute the pixel and byte domain bandwidth for the Pixel-to-Byte Converter or Byte-to-Pixel Converter IP to ensure proper implementation. The calculation uses key parameters such as pixel clock and byte clock frequencies, output pixel lanes, MIPI lanes, bits per component (BPC), and D-PHY Gear. 
           </li>
           <li>
-            <strong>Soft D-PHY Timing:</strong> TX/RX timing parameter
-            calculations with min/max ranges and IP default values
+            <strong>D-PHY Timing Parameters:</strong> Calculates D-PHY TX/RX timing parameters (e.g., t_LPX, t_HS-PREPARE, t_CLK-ZERO, etc.) minimum and maximum ranges, along with IP GUI default values. The calculations are dependent on the input link rate parameter. Currently, only Soft D-PHY with a fixed Gear 8 configuration is supported. 
           </li>
           <li>
-            <strong>Color Format Support:</strong> RGB (6-16 BPC), YCbCr (4:4:4,
-            4:2:2, 4:2:0), and RAW formats with automatic bits-per-pixel
+            <strong>Video Timing: </strong> Calculate key video parameters including total bandwidth, HTOTAL, VTOTAL, pixels per frame per second, and the recommended pixel clock frequency. These calculations are based on inputs such as total active pixels, horizontal/vertical blanking, frame rate, color format, and pixels per clock. Users can choose from predefined resolution presets (CTA, CEA, VESA) or create custom presets for flexibility. 
             calculation
           </li>
-          <li>
-            <strong>Device Support:</strong> CrossLink-NX, Avant,
-            CertusPro-NX/MachXO5, and Certus-NX with package and speed grade
-            validation
-          </li>
-          <li>
-            <strong>Export/Import:</strong> JSON configuration sharing and
-            documentation capabilities
-          </li>
         </ul>
-        <p><strong>Key Features:</strong></p>
+
+        <p><strong>Assumptions & Limitations:</strong></p>
         <ul>
           <li>
-            <strong>Multi-Device Support:</strong> Optimized for Lattice
-            CrossLink-NX, Avant, CertusPro-NX/MachXO5, and Certus-NX families
+            Hard D-PHY (maximum link rate of 2500 Mbps) with Gear 8 and Gear 16 configurations is not supported in the MIPI Configuration and D-PHY Timing Parameter calculations.
           </li>
           <li>
-            <strong>Industry Standards:</strong> Built-in CTA/CEA and VESA
-            timing presets for common display resolutions
+            MIPI D-PHY Timing Parameter calculations are compliant up to CSI-2/DSI D-PHY TX IP v2.3.1 and CSI-2/DSI D-PHY RX IP v2.0.0.
           </li>
           <li>
-            <strong>Real-Time Validation:</strong> Dynamic parameter validation
-            with device-specific constraints and error checking
-          </li>
-          <li>
-            <strong>Configuration Management:</strong> JSON export/import for
-            easy sharing and version control of design parameters
-          </li>
-          <li>
-            <strong>Comprehensive Coverage:</strong> From high-level video
-            timing to low-level D-PHY parameter optimization
-          </li>
-          <li>
-            <strong>User-Friendly Interface:</strong> Intuitive design with
-            tooltips, diagrams, and step-by-step guidance
-          </li>
-        </ul>
-        <p><strong>How to use:</strong></p>
-        <ol>
-          <li>
-            <strong>Start with Video Timing:</strong> Open
-            <a href="video_timing.html">Video Timing Calculator</a> and select a
-            preset resolution (CTA/CEA or VESA) or enter custom values for your
-            display requirements.
-          </li>
-          <li>
-            <strong>Configure MIPI Parameters:</strong> Use
-            <a href="config.html">MIPI Configuration</a> to select your Lattice
-            device, package, and speed grade, then enter line rate and lane
-            configuration.
-          </li>
-          <li>
-            <strong>Optimize D-PHY Timing:</strong> Proceed to
-            <a href="dphy.html">Soft D-PHY Parameter Calculator</a> to calculate
-            precise timing parameters for your specific bit rate requirements.
-          </li>
-          <li>
-            <strong>Validate and Export:</strong> Review all calculated
-            parameters, validate against device specifications, and export your
-            configuration as JSON for team sharing and documentation.
-          </li>
-          <li>
-            <strong>Iterate as Needed:</strong> Use the import/export
-            functionality to quickly test different configurations and optimize
-            your design parameters.
-          </li>
-        </ol>
-        <p><strong>Assumptions & limitations:</strong></p>
-        <ul>
-          <li>
-            Calculations assume synchronous pixel domain and typical D-PHY
-            efficiency; verify exact requirements with panel/sensor datasheets
-            and Lattice device specifications.
-          </li>
-          <li>
-            Results provide engineering estimates based on standard MIPI D-PHY
-            specifications; hardware validation and Lattice Radiant verification
-            are recommended.
-          </li>
-          <li>
-            Device-specific line rate ranges are based on Lattice device
-            capabilities; consult the latest device documentation for production
-            requirements.
-          </li>
-          <li>
-            Soft D-PHY timing calculations are optimized for Lattice
-            implementations; verify compatibility with your specific design
-            requirements.
-          </li>
-        </ul>
-        <ul>
-          <li>
-            <a href="config.html">MIPI Configuration</a>: Configure MIPI-related
-            parameters.
-          </li>
-          <li>
-            <a href="dphy.html">Soft D-PHY Parameter</a>: Adjust and calculate
-            D-PHY parameters.
-          </li>
-          <li>
-            <a href="video_timing.html">Video Timing</a>: Calculate video timing
-            parameters.
+            Total bandwidth calculation in the Video Timing section excludes overheads such as Packet Header and Packet Footer.
           </li>
         </ul>
       </section>
