@@ -25,7 +25,7 @@
           <nav class="top-nav">
             <a href="index.html" class="nav-link">Home</a>
             <a href="config.html" class="nav-link">MIPI Configuration</a>
-            <a href="dphy.html" class="nav-link">Soft D-PHY Parameter</a>
+            <a href="dphy.html" class="nav-link">D-PHY Timing Parameters</a>
             <a href="video_timing.html" class="nav-link">Video Timing</a>
           </nav>
         </div>
@@ -105,16 +105,10 @@
               </span>
             </h2>
             <p style="font-weight: normal">
-              This calculator derives fundamental video timing and bandwidth
-              metrics from either a selected industry timing (CTA/CEA or VESA)
-              or a custom set of porch/sync values that you provide. It
-              consolidates horizontal and vertical blanking, computes total
-              active + blanking pixels per line and per frame, and then
-              determines the pixel clock and aggregate link bandwidth required
-              for transmission.
+              This tool is designed to help users calculate the required pixel clock and total bandwidth needed to receive and transmit a specific video resolution. Users can either select from preset resolutions or enter a custom video resolution.
             </p>
             <p style="font-weight: normal; margin-top: 0.8rem">
-              Results reported:
+              The results are calculated using the following equations:
             </p>
             <ul
               style="
@@ -124,24 +118,19 @@
               "
             >
               <li>
-                <strong>Horizontal Total Pixel</strong> = Active + Total
-                Horizontal Blanking
+                <strong>HTOTAL</strong> = Horizontal Pixels + Total Horizontal Blanking
               </li>
               <li>
-                <strong>Vertical Total Lines</strong> = Active + Total Vertical
-                Blanking
+                <strong>VTOTAL</strong> = Vertical Lines + Total Vertical Blanking
               </li>
               <li>
-                <strong>Total Pixel per Frame per Sec</strong> = H Total × V
-                Total × Refresh Rate
+                <strong>Total Pixel per Frame per Sec</strong> = HTOTAL × VTOTAL × Refresh Rate
               </li>
               <li>
-                <strong>Pixel Clock (MHz)</strong> = (Total Pixel per Frame per
-                Sec) / 10^6
+                <strong>Pixel Clock (MHz)</strong> = Total Pixel per Frame per Sec ÷ 10^6
               </li>
               <li>
-                <strong>Total Link Bandwidth Used (Gbps)</strong> = Pixel Clock
-                × Effective Bits per Pixel ÷ 1000
+                <strong>Total Link Bandwidth Used (Gbps)</strong> = Total Pixel per Frame per Sec × Bits per Pixel ÷ 10^9
               </li>
             </ul>
             <!-- preview is shown from the tooltip above -->
@@ -160,22 +149,15 @@
             <h2>Instructions</h2>
             <ol style="font-weight: normal">
               <li>
-                You may choose either preset resolution or custom resolution
-                that you require in the calculator. If you choose any preset
-                resolution (CTA/CEA or VESA), the parameters will be populated
-                automatically.
+                You may choose either to use a preset resolution or custom resolution that you require in your design. If you choose any preset resolution (extracted from CTA/CEA and VESA specification), the parameters will be populated automatically. Alternatively, you could import JSON file of previous calculation.
               </li>
               <li>
-                If you choose to customize, please populate the
-                horizontal/vertical active and blanking information. Then,
-                populate the rest of the parameters (color format, Pixel Per
-                Clock, Refresh Rate (Hz), and so on).
+                If you choose to customize, please populate all the required parameters, e.g., horizontal/vertical sync, blanking information, Refresh Rate, Color Format, etc. 
               </li>
               <li>
-                The calculator will auto-calculate the total link bandwidth used
-                (Gbps), as well as required pixel clock.
+                Press “Calculate” to calculate the Total Link Bandwidth Used (Gbps), as well as the required pixel clock for the target video resolution. You may export the JSON file as necessary.  
               </li>
-              <li>Click "Clear" to reset the calculator.</li>
+              <li>Note that to determine the required Line Rate for each MIPI lane(s), you may divide the Total Link Bandwidth </li>
             </ol>
           </div>
         </div>
