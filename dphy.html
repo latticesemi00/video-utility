@@ -80,7 +80,7 @@
           <nav class="top-nav">
             <a href="index.html" class="nav-link">Home</a>
             <a href="config.html" class="nav-link">MIPI Configuration</a>
-            <a href="dphy.html" class="nav-link">Soft D-PHY Parameter</a>
+            <a href="dphy.html" class="nav-link">D-PHY Timing Parameters</a>
             <a href="video_timing.html" class="nav-link">Video Timing</a>
           </nav>
         </div>
@@ -115,7 +115,7 @@
             "
           >
             <h2 style="display:flex; align-items:center; gap:0.6rem;">
-              Soft D-PHY Timing Calculator
+              D-PHY Timing Parameters Calculator
               <span
                 class="diagram-tooltip"
                 tabindex="0"
@@ -137,12 +137,7 @@
               </span>
             </h2>
             <p style="font-weight: normal">
-              Lattice Radiant automatically calculates protocol timing
-              parameters based on user input. However, users can also customize
-              these parameters. This tool assists in calculating alternative
-              D-PHY timing parameter values.<br /><br />
-              <strong>This is meant to be used for Soft D-PHY and CIL only.</strong> <br />
-              <strong>Calculations assume Gear 8 Mode.</strong>
+              Lattice Radiant automatically calculates protocol timing parameters based on the defined Line Rate, but users also have the flexibility to customize these settings. This tool helps calculate alternative MIPI D-PHY timing parameter values that fully comply with the MIPI D-PHY specification for the following IP cores in Radiant:<br /><br />
             </p>
             <div style="margin-top: 1rem; font-weight: normal">
               <a
@@ -150,7 +145,7 @@
                 target="_blank"
                 rel="noopener"
                 style="color: #50affc; text-decoration: underline"
-                >Lattice MIPI D-PHY TX Page</a
+                >Lattice MIPI D-PHY TX</a
               >
               <br /><br />
               <a
@@ -158,7 +153,7 @@
                 target="_blank"
                 rel="noopener"
                 style="color: #50affc; text-decoration: underline"
-                >Lattice MIPI D-PHY RX Page</a
+                >Lattice MIPI D-PHY RX</a
               >
               <br /><br />
               
@@ -177,19 +172,21 @@
               border: 1px solid rgba(255, 255, 255, 0.1);
             "
           >
+
+          <p></p>
+          <strong>Note that the actual timing parameter is equal to Byte Clock Period (ps) multiply with the calculated attribute value shown in the table below.  Only Soft D-PHY (Soft CIL) with Gear 8 configuration is supported for now. </strong> <br />
+          <p></p>
+
             <h2>Instructions</h2>
             <ol style="font-weight: normal; padding-left: 1.2rem">
               <li>
-                Insert desired D-PHY Clock Frequency and Bit Rate into their
-                fields.
+                Insert desired Line Rate into the field.
               </li>
               <li>
-                Press "Calculate" to show the values for TX timing parameters
-                and DX timing output.
+                Press "Calculate" to show the calculated values for TX and RX timing parameters.
               </li>
               <li>
-                Choose a value between Min and Max for each parameter for your
-                own design.
+                Choose a value between Min and Max for each parameter for your own design. You may export the JSON file as necessary.
               </li>
             </ol>
             <h2>Customizing TX Soft D-PHY Protocol Timing Parameters:</h2>
@@ -201,17 +198,31 @@
               "
             >
               <li>
-                In Lattice Radiant, open the "Module/IP Block Wizard" for the TX
-                D-PHY IP.
+                In Lattice Radiant, open the "Module/IP Block Wizard" for the CSI-2/DSI D-PHY TX IP.
               </li>
               <li>Navigate to the "Protocol Timing Parameter tab".</li>
               <li>Select the "Customize TX Timing Parameter Values" option.</li>
               <li>
-                Modify the parameters according to the values provided by this
-                tool.
+                Modify the parameters according to the values provided by this tool. Use values within Min-Max. Recommended to use values close to Min. 
               </li>
               <li>Click the "Generate" button to save your changes.</li>
             </ol>
+
+            <h2>Customizing RX Soft D-PHY Protocol Timing Parameters:</h2>
+            <ol
+              style="
+                font-weight: normal;
+                padding-left: 1.2rem;
+                margin-top: 0rem;
+              "
+            >
+              <li>
+                In Lattice Radiant, open the "Module/IP Block Wizard" for the CSI-2/DSI D-PHY RX IP.
+              </li>
+              <li>Under Timing Parameter section, enable “Customize CIL Data Settle” check box.</li>
+              <li>Modify the parameters according to the values provided by this tool. Use values within Min-Max. Recommended to use values close to Min. </li>
+            </ol>
+
           </div>
         </div>
         <!-- Main content row as flexbox -->
