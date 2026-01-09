@@ -23,7 +23,7 @@
           <nav class="top-nav">
             <a href="index.html" class="nav-link">Home</a>
             <a href="config.html" class="nav-link">MIPI Configuration</a>
-            <a href="dphy.html" class="nav-link">Soft D-PHY Parameter</a>
+            <a href="dphy.html" class="nav-link">D-PHY Timing Parameters</a>
             <a href="video_timing.html" class="nav-link">Video Timing</a>
           </nav>
         </div>
@@ -114,8 +114,7 @@
             </span>
           </h2>
           <p style="font-weight: normal">
-            This page allows you to calculate the MIPI bandwidth and clock
-            frequencies for the Lattice devices based on the input parameters.
+            This page enables you to calculate MIPI bandwidth and clock frequencies for Lattice devices (Soft D-PHY) based on your input parameters. The resulting information can be used when configuring the following IP cores in Radiant:
           </p>
           <div style="margin-top: 1rem; font-weight: normal">
             <a
@@ -123,7 +122,7 @@
               target="_blank"
               rel="noopener"
               style="color: #50affc; text-decoration: underline"
-              >Lattice Byte to Pixel Converter User Guide</a
+              >Lattice Byte-to-Pixel Converter IP</a
             >
             <br /><br />
             <a
@@ -131,7 +130,7 @@
               target="_blank"
               rel="noopener"
               style="color: #50affc; text-decoration: underline"
-              >Lattice Pixel to Byte Converter User Guide</a
+              >Lattice Pixel-to-Byte Converter IP</a
             >
           </div>
         </div>
@@ -150,12 +149,12 @@
         >
           <h2>Instructions</h2>
           <ol style="font-weight: normal">
-            <li>Select your device from the Device dropdown above.</li>
+            <li>Select your device from the Device dropdown menu or simply import JSON file of previous calculation. Note that valid MIPI line rate range is dependent on this device/package/speed selection. </li>
             <li>Enter the respective parameters in the input fields.</li>
             <li>
-              Pressing "Calculate" will display the values for Bits per Clock,
-              D_PHY Clock, Pixel Clock Frequency and Byte Clock Frequency.
+              Pressing "Calculate" will display the values for Bits per Clock, D-PHY Clock, Pixel Clock Frequency and Byte Clock Frequency. You may export the JSON file as necessary. 
             </li>
+            <li>When configuring the Byte-to-Pixel or Pixel-to-Byte IP, ensure that all relevant parameters align with the MIPI D-PHY module or the CSI-2/DSI TX/RX IP configuration in your design. </li>
           </ol>
         </div>
       </div>
@@ -844,15 +843,14 @@
             >
               <div class="desc-title">Pixel-Byte Frequency Calculator</div>
               <div class="desc-text" style="font-weight: normal">
-                This page allows you to calculate the MIPI bandwidth for
-                selected Lattice devices based on the input parameters.<br />
+                This page allows you to calculate the pixel interface or byte interface bandwidth based on the input parameters. The resulting information can be used when configuring the following IP cores in Radiant:<br />
                 <br />
                 <a
                   href="https://www.latticesemi.com/Products/DesignSoftwareAndIP/IntellectualProperty/IPCore/IPCores04/BytetoPixelConverter/"
                   target="_blank"
                   rel="noopener"
                   style="color: #50affc; text-decoration: underline"
-                  >Lattice Byte to Pixel Converter User Guide</a
+                  >Lattice Byte-to-Pixel Converter (B2P) IP</a
                 >
                 <br /><br />
                 <a
@@ -860,7 +858,7 @@
                   target="_blank"
                   rel="noopener"
                   style="color: #50affc; text-decoration: underline"
-                  >Lattice Pixel to Byte Converter User Guide</a
+                  >Lattice Pixel-to-Byte Converter (P2B) IP</a
                 >
                 <br /><br />
               </div>
@@ -875,11 +873,12 @@
             >
               <div class="desc-title">Usage Instructions</div>
               <div class="desc-text" style="font-weight: normal">
-                1. Enter parameters value into their respective fields.<br />
-                2. Click the "Calculate" button to compute the respective
-                bandwidth.<br />
-                3. The results will be displayed below the input fields.<br />
-                4. Use the "Clear" button to reset the form fields.
+                1. Enter the parameter values in their respective fields.<br />
+                2. Click the “Calculate” button to calculate the bandwidth.<br />
+                3. View the results, which will be displayed below the input fields.<br />
+                4. Recommendation: The pixel and byte interfaces should ideally have equivalent bandwidth.<br />
+                - If this cannot be achieved due to design constraints, configure the transmit interface (pixel interface for B2P IP or byte interface for P2B IP) with a slightly higher bandwidth.<br />
+                - The internal FIFO is automatically configured to absorb any read/write timing differences. <br />
               </div>
             </div>
           </div>
